@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="blank_email">E-mail не може бути пустим</string>
+    <string name="invalid_email">Невірна адреса</string>
+    <string name="blank_password">Пароль не може бути пустим</string>
+    <string name="email">E-mail</string>
+    <string name="password">Пароль</string>
+    <string name="show_password">Показати пароль</string>
+    <string name="hide_password">Приховати пароль</string>
+    <string name="forgot_password">Забули пароль?</string>
+    <string name="login">Увійти</string>
+    <string name="signup">Реєстрація</string>
+    <string name="auth">Вхід до магазину</string>
+    <string name="login_error">Недійсний користувач або пароль</string>
+    <string name="network_error">Не вдалося підключитися до сервера. Перевірте підключення до Інтернету.</string>
+    <string name="unknown_error">Сталася неочікувана помилка</string>
+</resources>

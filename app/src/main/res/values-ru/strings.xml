@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="blank_email">E-mail не может быть пустым</string>
+    <string name="invalid_email">Неверный адрес</string>
+    <string name="blank_password">Пароль не может быть пустым</string>
+    <string name="email">E-mail</string>
+    <string name="password">Пароль</string>
+    <string name="hide_password">Скрыть пароль</string>
+    <string name="show_password">Показать пароль</string>
+    <string name="forgot_password">Забыли пароль?</string>
+    <string name="login">Войти</string>
+    <string name="signup">Регистрация</string>
+    <string name="auth">Вход в магазин</string>
+    <string name="login_error">Неверный пользователь или пароль</string>
+    <string name="network_error">Не удалось связаться с сервером. Проверьте подключение к Интернету.</string>
+    <string name="unknown_error">Произошла непредвиденная ошибка</string>
+</resources>
