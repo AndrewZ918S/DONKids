@@ -7,12 +7,12 @@ import ru.donkids.mobile.util.StaticText
 import javax.inject.Inject
 
 class ValidatePassword @Inject constructor() {
-    operator fun invoke(password: String): DynamicText {
+    operator fun invoke(password: String): DynamicText? {
         return when {
             password.isBlank() -> {
                 ResText(R.string.blank_password)
             }
-            else -> StaticText()
+            else -> null
         }
     }
 }

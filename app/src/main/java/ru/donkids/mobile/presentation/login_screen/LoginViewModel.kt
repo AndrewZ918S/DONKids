@@ -61,7 +61,7 @@ class LoginViewModelImpl @Inject constructor(
                     passwordError = passwordError
                 )
 
-                if (listOf(emailError, passwordError).any { true })
+                if (listOf(emailError, passwordError).any { it != null })
                     return
 
                 loginManual(state.email, state.password).onEach {

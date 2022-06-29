@@ -8,7 +8,7 @@ import ru.donkids.mobile.util.StaticText
 import javax.inject.Inject
 
 class ValidateEmail @Inject constructor() {
-    operator fun invoke(email: String): DynamicText {
+    operator fun invoke(email: String): DynamicText? {
         return when {
             email.isBlank() -> {
                 ResText(R.string.blank_email)
@@ -16,7 +16,7 @@ class ValidateEmail @Inject constructor() {
             !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
                 ResText(R.string.invalid_email)
             }
-            else -> StaticText()
+            else -> null
         }
     }
 }
