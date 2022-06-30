@@ -11,7 +11,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import ru.donkids.mobile.R
+import ru.donkids.mobile.data.remote.DonKidsApi
 import ru.donkids.mobile.domain.model.User
+import ru.donkids.mobile.domain.use_case.OpenChromeUrl
 import ru.donkids.mobile.domain.use_case.login.LoginManual
 import ru.donkids.mobile.domain.use_case.login.validate.ValidateEmail
 import ru.donkids.mobile.domain.use_case.login.validate.ValidatePassword
@@ -34,7 +36,8 @@ abstract class LoginViewModel : ViewModel() {
 class LoginViewModelImpl @Inject constructor(
     private val validateEmail: ValidateEmail,
     private val validatePassword: ValidatePassword,
-    private val loginManual: LoginManual
+    private val loginManual: LoginManual,
+    private val openChromeUrl: OpenChromeUrl
 ) : LoginViewModel() {
     override fun onEvent(event: LoginFormEvent) {
         when (event) {
@@ -94,10 +97,10 @@ class LoginViewModelImpl @Inject constructor(
                 }.launchIn(viewModelScope)
             }
             is LoginFormEvent.Signup -> {
-
+                openChromeUrl(event.context, DonKidsApi.SIGNUP_URL)
             }
             is LoginFormEvent.Restore -> {
-
+                openChromeUrl(event.context, DonKidsApi.RESTORE_URL)
             }
         }
     }

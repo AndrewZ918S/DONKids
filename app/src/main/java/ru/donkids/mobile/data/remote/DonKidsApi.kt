@@ -10,6 +10,8 @@ interface DonKidsApi {
     companion object {
         const val BASE_URL = "http://pri.donkids.ru"
         const val LOGIN_PATH = "/login"
+        const val SIGNUP_URL = "http://donkids.ru/register"
+        const val RESTORE_URL = "http://donkids.ru/passrestore"
     }
 
     @GET(LOGIN_PATH)

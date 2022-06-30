@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -42,12 +43,8 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel<LoginViewModelImpl>())
         }
     }
 
-    Surface {
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(32.dp)
-        ) {
+    Surface(Modifier.fillMaxSize()) {
+        Column(Modifier.padding(32.dp)) {
             Spacer(Modifier.weight(2f))
             Icon(
                 imageVector = Icons.Filled.AccountCircle,
@@ -127,38 +124,42 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel<LoginViewModelImpl>())
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
-            Text(
-                text = state.passwordError?.getText() ?: "",
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
-            )
-            LocalText(
-                resId = R.string.forgot_password,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.align(Alignment.End)
-            )
-            Spacer(Modifier.weight(3f))
-            if (state.isLoading) {
-                LinearProgressIndicator(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                )
-            } else {
+            Row(Modifier.padding(start = 16.dp, top = 4.dp)) {
                 Text(
-                    text = state.serverError?.getText() ?: "",
+                    text = state.passwordError?.getText() ?: "",
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(horizontal = 16.dp)
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.weight(1f)
                 )
+                TextButton(
+                    onClick = {
+                        viewModel.onEvent(LoginFormEvent.Restore(context))
+                    }
+                ) {
+                    LocalText(
+                        resId = R.string.forgot_password
+                    )
+                }
             }
+            Spacer(Modifier.weight(3f))
+            Text(
+                text = state.serverError?.getText() ?: "",
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(horizontal = 16.dp)
+            )
+            LinearProgressIndicator(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .alpha(if (state.isLoading) 1f else 0f)
+            )
             Spacer(Modifier.weight(3f))
             Row {
                 FilledTonalButton(
                     onClick = {
-                        viewModel.onEvent(LoginFormEvent.Signup)
+                        viewModel.onEvent(LoginFormEvent.Signup(context))
                     },
                     modifier = Modifier.weight(1f)
                 ) {

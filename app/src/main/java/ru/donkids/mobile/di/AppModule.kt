@@ -9,7 +9,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import ru.donkids.mobile.data.remote.DonKidsApi
 import ru.donkids.mobile.data.remote.StringToIntAdapter
+import ru.donkids.mobile.data.repository.CatalogRepositoryImpl
 import ru.donkids.mobile.data.repository.LoginRepositoryImpl
+import ru.donkids.mobile.domain.repository.CatalogRepository
 import ru.donkids.mobile.domain.repository.LoginRepository
 import javax.inject.Singleton
 
@@ -36,5 +38,11 @@ object AppModule {
     @Singleton
     fun provideLoginRepository(api: DonKidsApi): LoginRepository {
         return LoginRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCatalogRepository(api: DonKidsApi): CatalogRepository {
+        return CatalogRepositoryImpl(api)
     }
 }
