@@ -14,4 +14,14 @@
     <string name="login_error">Недійсний користувач або пароль</string>
     <string name="network_error">Не вдалося підключитися до сервера. Перевірте підключення до Інтернету.</string>
     <string name="unknown_error">Сталася неочікувана помилка</string>
+    <string name="home">Головна</string>
+    <string name="cart">Кошик</string>
+    <string name="catalog">Каталог</string>
+    <string name="favorite">Обране</string>
+    <string name="more">Ще</string>
+    <string name="search">Пошук</string>
+    <string name="scan">Сканувати</string>
+    <string name="search_catalog">Пошук за каталогом</string>
+    <string name="new_title">Новинки</string>
+    <string name="new_body">Останні надходження товару</string>
 </resources>

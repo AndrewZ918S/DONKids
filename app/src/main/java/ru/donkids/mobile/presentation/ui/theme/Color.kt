@@ -1,6 +1,8 @@
 package ru.donkids.mobile.presentation.ui.theme
 
+import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 
 // val seed = Color(0xFF4CAF50)
 
@@ -59,3 +61,16 @@ val md_theme_dark_inverseOnSurface = Color(0xFF1A1C19)
 val md_theme_dark_inverseSurface = Color(0xFFE2E3DD)
 val md_theme_dark_inversePrimary = Color(0xFF006E1C)
 val md_theme_dark_surfaceTint = Color(0xFF78DC77)
+
+fun ColorScheme.surfaceTone(level: Int): Color {
+    return surfaceTint.copy(
+        alpha = when (level) {
+            1 -> 0.05f
+            2 -> 0.08f
+            3 -> 0.11f
+            4 -> 0.12f
+            5 -> 0.14f
+            else -> 0f
+        }
+    ).compositeOver(surface)
+}

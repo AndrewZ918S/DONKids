@@ -11,10 +11,9 @@ class GetUser @Inject constructor(
 
         val id = preferences.getString("id", "")
         val name = preferences.getString("name", "")
-        val timestamp = preferences.getLong("timestamp", 0)
 
         return if (!id.isNullOrEmpty() && !name.isNullOrEmpty()) {
-            User(id, name, timestamp)
+            User(id, name)
         } else {
             null
         }

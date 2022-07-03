@@ -15,4 +15,14 @@
     <string name="login_error">Invalid email or password</string>
     <string name="network_error">Couldn\'t reach server. Check your internet connection.</string>
     <string name="unknown_error">An unexpected error occurred</string>
+    <string name="home">Home</string>
+    <string name="catalog">Catalog</string>
+    <string name="cart">Cart</string>
+    <string name="favorite">Favorite</string>
+    <string name="more">More</string>
+    <string name="search">Search</string>
+    <string name="scan">Scan</string>
+    <string name="search_catalog">Search in catalog</string>
+    <string name="new_title">New</string>
+    <string name="new_body">Latest arrivals</string>
 </resources>

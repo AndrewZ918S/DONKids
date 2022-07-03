@@ -11,7 +11,6 @@ class SetUser @Inject constructor(
 
         editor.putString("id", user?.id)
             .putString("name", user?.name)
-            .putLong("timestamp", user?.timestamp ?: 0)
             .apply()
     }
 }
