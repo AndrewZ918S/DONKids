@@ -1,47 +1,26 @@
 package ru.donkids.mobile.data.remote.dto
 
 import com.squareup.moshi.Json
-import ru.donkids.mobile.data.remote.StringValue
-import ru.donkids.mobile.domain.model.Product
+import ru.donkids.mobile.data.remote.annotations.ImageHash
+import ru.donkids.mobile.data.remote.annotations.ImageLink
+import ru.donkids.mobile.data.remote.annotations.StringValue
 
 data class ProductDto(
-    @field:Json(name = "id")
-    val id: String,
-    @field:Json(name = "art")
-    val code: String,
-    @field:Json(name = "artpost")
-    val vendorCode: String,
-    @field:StringValue
-    @field:Json(name = "cena")
-    val price: Float,
-    @field:Json(name = "desc")
-    val description: String,
-    @field:StringValue
-    @field:Json(name = "grp")
-    val isCategory: Boolean,
-    @field:Json(name = "har")
-    val properties: String,
-    @field:Json(name = "image")
-    val imagePath: String,
-    @field:Json(name = "image_hash")
-    val imageHash: String,
-    @field:Json(name = "image_link")
-    val imageLink: String,
-    @field:Json(name = "keywords")
-    val keywords: String,
-    @field:Json(name = "nazv")
-    val abbreviation: String,
-    @field:Json(name = "nazvpoln")
-    val title: String,
-    @field:StringValue
-    @field:Json(name = "ost")
-    val isAvailable: Boolean,
-    @field:Json(name = "razmer")
-    val size: String,
-    @field:Json(name = "rod")
-    val parentId: String,
-    @field:Json(name = "shk")
-    val barcode: String,
-    @field:Json(name = "upd")
-    val updateIndex: String
+    @Json(name = "id") @StringValue val id: Int,
+    @Json(name = "art") val code: String,
+    @Json(name = "artpost") val vendorCode: String,
+    @Json(name = "cena") @StringValue val price: Float?,
+    @Json(name = "desc") val description: String,
+    @Json(name = "grp") @StringValue val isCategory: Boolean,
+    @Json(name = "har") val properties: String,
+    @Json(name = "image_hash") @ImageHash val imageHash: String,
+    @Json(name = "image_link") @ImageLink val imageLink: String,
+    @Json(name = "keywords") val keywords: String,
+    @Json(name = "nazv") val abbreviation: String,
+    @Json(name = "nazvpoln") val title: String,
+    @Json(name = "ost") @StringValue val isAvailable: Boolean,
+    @Json(name = "razmer") val size: String,
+    @Json(name = "rod") @StringValue val parentId: Int,
+    @Json(name = "shk") val barcode: String?,
+    @Json(name = "upd") val updateIndex: String
 )

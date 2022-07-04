@@ -31,9 +31,7 @@ class HomePageViewModelImpl @Inject constructor(
             repository.getBanners().collect { result ->
                 when (result) {
                     is Resource.Success -> {
-                        result.data?.let {
-                            state = state.copy(banners = it)
-                        }
+                        state = state.copy(banners = result.data)
                     }
                     else -> Unit
                 }

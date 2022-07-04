@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ru.donkids.mobile.presentation.Destinations
+import ru.donkids.mobile.presentation.page_catalog.CatalogPage
 import ru.donkids.mobile.presentation.page_home.HomePage
 import ru.donkids.mobile.presentation.ui.theme.DONKidsTheme
 import ru.donkids.mobile.presentation.ui.theme.SystemBarColor
@@ -27,18 +28,6 @@ fun MainScreen(navController: NavController? = null) {
     }
     val state = viewModel.state
 
-    SystemBarColor(
-        statusBarColor = colorScheme.surface,
-        navigationBarColor = colorScheme.surfaceTone(2)
-    )
-
-    BackHandler(
-        enabled = state.selectedPage != 0,
-        onBack = {
-            viewModel.onEvent(MainScreenEvent.NavigationItemSelected(0))
-        }
-    )
-
     LaunchedEffect(Unit) {
         viewModel.onEvent(MainScreenEvent.CheckLogin)
 
@@ -51,11 +40,24 @@ fun MainScreen(navController: NavController? = null) {
         }
     }
 
+    BackHandler(
+        enabled = state.selectedPage != 0,
+        onBack = {
+            viewModel.onEvent(MainScreenEvent.NavigationItemSelected(0))
+        }
+    )
+
+    SystemBarColor(
+        statusBarColor = colorScheme.surface,
+        navigationBarColor = colorScheme.surfaceTone(2)
+    )
+
     Scaffold(
-        content = { innerPadding ->
-            Surface(Modifier.padding(innerPadding)) {
+        content = {
+            Surface(Modifier.padding(it)) {
                 when (state.selectedPage) {
                     0 -> HomePage(navController)
+                    1 -> CatalogPage(navController)
                 }
             }
         },

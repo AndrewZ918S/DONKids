@@ -2,7 +2,7 @@ package ru.donkids.mobile.domain.use_case.validate
 
 import android.util.Patterns
 import ru.donkids.mobile.R
-import ru.donkids.mobile.domain.use_case.StringResource
+import ru.donkids.mobile.domain.use_case.localize.StringResource
 import javax.inject.Inject
 
 class ValidateEmail @Inject constructor(

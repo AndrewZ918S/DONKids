@@ -39,6 +39,7 @@ import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
 import ru.donkids.mobile.R
+import ru.donkids.mobile.presentation.Destinations
 import ru.donkids.mobile.presentation.ui.theme.DONKidsTheme
 import ru.donkids.mobile.presentation.ui.theme.surfaceTone
 
@@ -67,7 +68,12 @@ fun HomePage(navController: NavController? = null) {
                 )
         ) {
             Row(Modifier.padding(horizontal = 4.dp)) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(
+                    onClick = {
+                        navController?.navigate("${Destinations.PRODUCT}/-1")
+
+                    }
+                ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_search),
                         contentDescription = stringResource(R.string.search),

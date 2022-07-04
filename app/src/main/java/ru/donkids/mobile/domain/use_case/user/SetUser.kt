@@ -7,9 +7,8 @@ class SetUser @Inject constructor(
     private val getUserPreferences: GetUserPreferences
 ) {
     operator fun invoke(user: User?) {
-        val editor = getUserPreferences().edit()
-
-        editor.putString("id", user?.id)
+        getUserPreferences().edit()
+            .putString("id", user?.id)
             .putString("name", user?.name)
             .apply()
     }

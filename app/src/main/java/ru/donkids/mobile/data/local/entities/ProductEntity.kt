@@ -5,14 +5,13 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class ProductEntity(
-    val id: String,
+    val id: Int,
     val code: String,
     val vendorCode: String,
-    val price: Float,
+    val price: Float?,
     val description: String,
     val isCategory: Boolean,
     val properties: String,
-    val imagePath: String,
     val imageHash: String,
     val imageLink: String,
     val keywords: String,
@@ -20,8 +19,8 @@ data class ProductEntity(
     val title: String,
     val isAvailable: Boolean,
     val size: String,
-    val parentId: String,
-    val barcode: String,
+    val parentId: Int,
+    val barcode: String?,
     val updateIndex: String,
     @PrimaryKey val key: Int? = null
 )

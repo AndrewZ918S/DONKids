@@ -1,4 +1,4 @@
-package ru.donkids.mobile.domain.use_case
+package ru.donkids.mobile.domain.use_case.localize
 
 import android.content.Context
 import androidx.annotation.StringRes

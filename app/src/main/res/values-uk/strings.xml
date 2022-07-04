@@ -24,4 +24,6 @@
     <string name="search_catalog">Пошук за каталогом</string>
     <string name="new_title">Новинки</string>
     <string name="new_body">Останні надходження товару</string>
+    <string name="login_incorrect">Помилка реєстрації</string>
+    <string name="check_error">Помилка входу до системи</string>
 </resources>

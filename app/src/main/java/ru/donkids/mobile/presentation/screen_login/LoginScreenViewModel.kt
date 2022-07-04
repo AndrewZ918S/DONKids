@@ -32,7 +32,7 @@ abstract class LoginScreenViewModel : ViewModel() {
         ) : Event()
 
         data class Proceed(
-            val user: User?
+            val user: User
         ) : Event()
     }
 }

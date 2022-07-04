@@ -53,9 +53,7 @@ fun LoginScreen(navController: NavController? = null) {
         viewModel.events.collect {
             when (it) {
                 is LoginScreenViewModel.Event.Proceed -> {
-                    it.user?.let {
-                        navController?.navigate(Destinations.MAIN)
-                    }
+                    navController?.navigate(Destinations.MAIN)
                 }
                 is LoginScreenViewModel.Event.OpenUrl -> {
                     val chromePkg = "com.android.chrome"

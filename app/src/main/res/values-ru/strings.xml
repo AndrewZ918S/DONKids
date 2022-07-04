@@ -24,4 +24,6 @@
     <string name="search_catalog">Поиск по каталогу</string>
     <string name="new_title">Новинки</string>
     <string name="new_body">Последние поступления товара</string>
+    <string name="login_incorrect">Ошибка регистрации</string>
+    <string name="check_error">Ошибка входа в систему</string>
 </resources>

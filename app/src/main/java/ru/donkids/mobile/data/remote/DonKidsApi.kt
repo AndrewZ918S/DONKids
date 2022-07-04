@@ -4,10 +4,11 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
-import ru.donkids.mobile.data.remote.dto.ApiKeyDto
-import ru.donkids.mobile.data.remote.dto.ProductDto
-import ru.donkids.mobile.data.remote.dto.ProductRequest
-import ru.donkids.mobile.data.remote.dto.UserDto
+import ru.donkids.mobile.data.remote.request.ProductRequest
+import ru.donkids.mobile.data.remote.response.KeyResponse
+import ru.donkids.mobile.data.remote.response.LoginResponse
+import ru.donkids.mobile.data.remote.response.ProductResponse
+import ru.donkids.mobile.data.remote.response.TestResponse
 
 interface DonKidsApi {
     companion object {
@@ -19,14 +20,17 @@ interface DonKidsApi {
     }
 
     @GET(LOGIN_PATH)
-    suspend fun getKey(): ApiKeyDto
+    suspend fun getKey(): KeyResponse
 
     @GET(LOGIN_PATH)
-    suspend fun loginUser(@Query("r") key: String, @Query("h") id: String): UserDto
+    suspend fun loginUser(@Query("r") key: String, @Query("h") id: String): LoginResponse
 
     @GET(LOGIN_PATH)
-    suspend fun updateUser(@Query("w") key: String, @Query("h") id: String): UserDto
+    suspend fun updateUser(@Query("w") key: String, @Query("h") id: String): LoginResponse
 
-    @POST
-    suspend fun getProducts(@Body request: ProductRequest): List<ProductDto>
+    @GET(".")
+    suspend fun checkUser(@Query("id") id: String): TestResponse
+
+    @POST(".")
+    suspend fun getProducts(@Body request: ProductRequest): ProductResponse
 }

@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import ru.donkids.mobile.presentation.screen_login.LoginScreen
 import ru.donkids.mobile.presentation.screen_main.MainScreen
+import ru.donkids.mobile.presentation.screen_product.ProductScreen
 import ru.donkids.mobile.presentation.ui.theme.DONKidsTheme
 
 @AndroidEntryPoint
@@ -39,6 +42,16 @@ class MainActivity : ComponentActivity() {
                     composable(Destinations.LOGIN) {
                         LoginScreen(navController)
                     }
+                    composable(
+                        route = Destinations.PRODUCT.plus("/{id}"),
+                        arguments = listOf(
+                            navArgument("id") {
+                                type = NavType.IntType
+                            }
+                        )
+                    ) {
+                        ProductScreen(navController, it.arguments?.getInt("id"))
+                    }
                 }
             }
         }
@@ -46,6 +59,8 @@ class MainActivity : ComponentActivity() {
 }
 
 object Destinations {
-    const val MAIN = "main"
     const val LOGIN = "login"
+    const val PRODUCT = "main/product"
+    const val MAIN = "main"
 }
+
