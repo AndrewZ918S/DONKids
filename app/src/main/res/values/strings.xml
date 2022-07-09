@@ -27,4 +27,19 @@
     <string name="new_body">Latest arrivals</string>
     <string name="login_incorrect">Registration error</string>
     <string name="check_error">Login error</string>
+    <string name="login_need">Login required</string>
+    <string name="go_back">Back</string>
+    <string name="not_found">Product not found</string>
+    <string name="recently_watched">Recently watched</string>
+    <string name="view_all">View all</string>
+    <string name="empty">Empty</string>
+    <string name="network_timeout">The server can\'t be reached</string>
+    <string name="product_unavailable">The product is no longer available</string>
+    <string name="available">Available</string>
+    <string name="not_available">Not available</string>
+    <string name="buy_now">Buy now</string>
+    <string name="add_to_cart">Add to cart</string>
+    <string name="view_in_cart">View in cart</string>
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="view_in_favorites">View in favorites</string>
 </resources>

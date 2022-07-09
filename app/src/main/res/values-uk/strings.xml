@@ -26,4 +26,19 @@
     <string name="new_body">Останні надходження товару</string>
     <string name="login_incorrect">Помилка реєстрації</string>
     <string name="check_error">Помилка входу до системи</string>
+    <string name="login_need">Потрібна реєстрація</string>
+    <string name="go_back">Назад</string>
+    <string name="not_found">Товар не знайдено</string>
+    <string name="recently_watched">Нещодавно переглянуті</string>
+    <string name="view_all">Ще</string>
+    <string name="empty">Пусто</string>
+    <string name="network_timeout">Сервер недоступний</string>
+    <string name="product_unavailable">Товар більше недоступний</string>
+    <string name="available">В наявності</string>
+    <string name="not_available">Немає в наявності</string>
+    <string name="buy_now">Купити зараз</string>
+    <string name="add_to_cart">Додати в кошик</string>
+    <string name="view_in_cart">Переглянути в кошику</string>
+    <string name="add_to_favorites">Додати в обране</string>
+    <string name="view_in_favorites">Переглянути в обраному</string>
 </resources>

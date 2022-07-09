@@ -26,4 +26,19 @@
     <string name="new_body">Последние поступления товара</string>
     <string name="login_incorrect">Ошибка регистрации</string>
     <string name="check_error">Ошибка входа в систему</string>
+    <string name="login_need">Требуется регистрация</string>
+    <string name="go_back">Назад</string>
+    <string name="not_found">Товар не найден</string>
+    <string name="recently_watched">Недавно просмотренные</string>
+    <string name="view_all">Еще</string>
+    <string name="empty">Пусто</string>
+    <string name="network_timeout">Сервер недоступен</string>
+    <string name="product_unavailable">"Товар больше недоступен "</string>
+    <string name="available">Есть в наличии</string>
+    <string name="not_available">Нет в наличии</string>
+    <string name="buy_now">Купить сейчас</string>
+    <string name="add_to_cart">Добавить в корзину</string>
+    <string name="view_in_cart">Посмотреть в корзине</string>
+    <string name="add_to_favorites">Добавить в избранное</string>
+    <string name="view_in_favorites">Посмотреть в избранном</string>
 </resources>
