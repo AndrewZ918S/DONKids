@@ -1,8 +1,13 @@
 package ru.donkids.mobile.presentation.screen_product
 
-import ru.donkids.mobile.domain.model.Product
-
 data class ProductScreenState(
-    val product: Product? = null,
-    val category: Product? = null
+    val category: String = "",
+    val imageLink: String = "",
+    val title: String = "",
+    val productCode: String = "",
+    val vendorCode: String = "",
+    val isAvailable: Boolean = false,
+    val isFavorite: Boolean = true,
+    val inCart: Boolean = true,
+    val price: Float? = null
 )

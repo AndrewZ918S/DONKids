@@ -3,6 +3,7 @@ package ru.donkids.mobile.presentation.screen_login
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,8 +42,21 @@ abstract class LoginScreenViewModel : ViewModel() {
 class LoginScreenScreenViewModelImpl @Inject constructor(
     private val validateEmail: ValidateEmail,
     private val validatePassword: ValidatePassword,
-    private val loginManual: LoginManual
+    private val loginManual: LoginManual,
+    savedStateHandle: SavedStateHandle
 ) : LoginScreenViewModel() {
+    init {
+        val message = savedStateHandle.get<String>("message")
+
+        state = state.copy(
+            serverError = when (message) {
+                "null" -> ""
+                null -> ""
+                else -> message
+            }
+        )
+    }
+
     override fun onEvent(event: LoginScreenEvent) {
         viewModelScope.launch {
             when (event) {

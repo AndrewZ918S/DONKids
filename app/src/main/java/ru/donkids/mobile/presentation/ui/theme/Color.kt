@@ -1,12 +1,13 @@
 package ru.donkids.mobile.presentation.ui.theme
 
-import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 
 // val seed = Color(0xFF4CAF50)
 
-val md_theme_light_primary = Color(0xFF006E1C)
+val md_theme_light_primary = Color(0xFF388E3C)
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)
 val md_theme_light_primaryContainer = Color(0xFF94F990)
 val md_theme_light_onPrimaryContainer = Color(0xFF002204)
@@ -14,10 +15,10 @@ val md_theme_light_secondary = Color(0xFF52634F)
 val md_theme_light_onSecondary = Color(0xFFFFFFFF)
 val md_theme_light_secondaryContainer = Color(0xFFD5E8CF)
 val md_theme_light_onSecondaryContainer = Color(0xFF111F0F)
-val md_theme_light_tertiary = Color(0xFF38656A)
+val md_theme_light_tertiary = Color(0xFFFFA000)
 val md_theme_light_onTertiary = Color(0xFFFFFFFF)
-val md_theme_light_tertiaryContainer = Color(0xFFBCEBF0)
-val md_theme_light_onTertiaryContainer = Color(0xFF002023)
+val md_theme_light_tertiaryContainer = Color(0xFFF9E534)
+val md_theme_light_onTertiaryContainer = Color(0xFF201C00)
 val md_theme_light_error = Color(0xFFBA1A1A)
 val md_theme_light_errorContainer = Color(0xFFFFDAD6)
 val md_theme_light_onError = Color(0xFFFFFFFF)
@@ -34,7 +35,7 @@ val md_theme_light_inverseSurface = Color(0xFF2F312D)
 val md_theme_light_inversePrimary = Color(0xFF78DC77)
 val md_theme_light_surfaceTint = Color(0xFF006E1C)
 
-val md_theme_dark_primary = Color(0xFF78DC77)
+val md_theme_dark_primary = Color(0xFF81C784)
 val md_theme_dark_onPrimary = Color(0xFF00390A)
 val md_theme_dark_primaryContainer = Color(0xFF005313)
 val md_theme_dark_onPrimaryContainer = Color(0xFF94F990)
@@ -42,10 +43,10 @@ val md_theme_dark_secondary = Color(0xFFBACCB3)
 val md_theme_dark_onSecondary = Color(0xFF253423)
 val md_theme_dark_secondaryContainer = Color(0xFF3B4B38)
 val md_theme_dark_onSecondaryContainer = Color(0xFFD5E8CF)
-val md_theme_dark_tertiary = Color(0xFFA0CFD4)
-val md_theme_dark_onTertiary = Color(0xFF00363B)
-val md_theme_dark_tertiaryContainer = Color(0xFF1F4D52)
-val md_theme_dark_onTertiaryContainer = Color(0xFFBCEBF0)
+val md_theme_dark_tertiary = Color(0xFFFFD54F)
+val md_theme_dark_onTertiary = Color(0xFF363100)
+val md_theme_dark_tertiaryContainer = Color(0xFF4F4800)
+val md_theme_dark_onTertiaryContainer = Color(0xFFF9E534)
 val md_theme_dark_error = Color(0xFFFFB4AB)
 val md_theme_dark_errorContainer = Color(0xFF93000A)
 val md_theme_dark_onError = Color(0xFF690005)
@@ -62,9 +63,10 @@ val md_theme_dark_inverseSurface = Color(0xFFE2E3DD)
 val md_theme_dark_inversePrimary = Color(0xFF006E1C)
 val md_theme_dark_surfaceTint = Color(0xFF78DC77)
 
-fun ColorScheme.surfaceTone(level: Int): Color {
-    return surfaceTint.copy(
-        alpha = when (level) {
+@Composable
+operator fun Color.get(elevation: Int): Color {
+    return colorScheme.surfaceTint.copy(
+        alpha = when (elevation) {
             1 -> 0.05f
             2 -> 0.08f
             3 -> 0.11f
@@ -72,5 +74,5 @@ fun ColorScheme.surfaceTone(level: Int): Color {
             5 -> 0.14f
             else -> 0f
         }
-    ).compositeOver(surface)
+    ).compositeOver(colorScheme.surface)
 }

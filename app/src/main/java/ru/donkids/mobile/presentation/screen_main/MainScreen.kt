@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -18,7 +19,9 @@ import ru.donkids.mobile.presentation.page_catalog.CatalogPage
 import ru.donkids.mobile.presentation.page_home.HomePage
 import ru.donkids.mobile.presentation.ui.theme.DONKidsTheme
 import ru.donkids.mobile.presentation.ui.theme.SystemBarColor
-import ru.donkids.mobile.presentation.ui.theme.surfaceTone
+import ru.donkids.mobile.presentation.ui.theme.get
+
+val LocalSnackbarHostState = compositionLocalOf { SnackbarHostState() }
 
 @Composable
 fun MainScreen(navController: NavController? = null) {
@@ -29,12 +32,12 @@ fun MainScreen(navController: NavController? = null) {
     val state = viewModel.state
 
     LaunchedEffect(Unit) {
-        viewModel.onEvent(MainScreenEvent.CheckLogin)
-
         viewModel.events.collect {
-            when(it) {
+            when (it) {
                 is MainScreenViewModel.Event.RequestLogin -> {
-                    navController?.navigate(Destinations.LOGIN)
+                    navController?.navigate(
+                        route = "${Destinations.LOGIN}?msg=${it.message}"
+                    )
                 }
             }
         }
@@ -49,8 +52,10 @@ fun MainScreen(navController: NavController? = null) {
 
     SystemBarColor(
         statusBarColor = colorScheme.surface,
-        navigationBarColor = colorScheme.surfaceTone(2)
+        navigationBarColor = colorScheme.surface[2]
     )
+
+    val snackbarHostState = LocalSnackbarHostState.current
 
     Scaffold(
         content = {
@@ -61,6 +66,7 @@ fun MainScreen(navController: NavController? = null) {
                 }
             }
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             NavigationBar {
                 state.pages.forEachIndexed { index, item ->

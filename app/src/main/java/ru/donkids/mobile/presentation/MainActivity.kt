@@ -2,6 +2,7 @@ package ru.donkids.mobile.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -37,20 +38,35 @@ class MainActivity : ComponentActivity() {
                         .systemBarsPadding()
                 ) {
                     composable(Destinations.MAIN) {
+                        BackHandler { finish() }
                         MainScreen(navController)
                     }
-                    composable(Destinations.LOGIN) {
-                        LoginScreen(navController)
-                    }
                     composable(
-                        route = Destinations.PRODUCT.plus("/{id}"),
+                        route = "${Destinations.LOGIN}?msg={message}",
                         arguments = listOf(
-                            navArgument("id") {
-                                type = NavType.IntType
+                            navArgument("message") {
+                                type = NavType.StringType
+                                nullable = true
                             }
                         )
                     ) {
-                        ProductScreen(navController, it.arguments?.getInt("id"))
+                        BackHandler { finish() }
+                        LoginScreen(navController)
+                    }
+                    composable(
+                        route = "${Destinations.PRODUCT}?id={productId}&code={productCode}",
+                        arguments = listOf(
+                            navArgument("productId") {
+                                type = NavType.IntType
+                                defaultValue = -1
+                            },
+                            navArgument("productCode") {
+                                type = NavType.StringType
+                                nullable = true
+                            }
+                        )
+                    ) {
+                        ProductScreen(navController)
                     }
                 }
             }
@@ -59,8 +75,8 @@ class MainActivity : ComponentActivity() {
 }
 
 object Destinations {
-    const val LOGIN = "login"
-    const val PRODUCT = "main/product"
     const val MAIN = "main"
+    const val LOGIN = "login"
+    const val PRODUCT = "product"
 }
 

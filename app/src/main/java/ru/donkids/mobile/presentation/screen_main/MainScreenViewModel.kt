@@ -9,7 +9,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import ru.donkids.mobile.domain.repository.CatalogRepository
 import ru.donkids.mobile.domain.use_case.user.GetUser
+import ru.donkids.mobile.util.Resource
 import javax.inject.Inject
 
 abstract class MainScreenViewModel : ViewModel() {
@@ -22,22 +24,37 @@ abstract class MainScreenViewModel : ViewModel() {
     open fun onEvent(event: MainScreenEvent) = Unit
 
     sealed class Event {
-        object RequestLogin : Event()
+        data class RequestLogin(
+            val message: String? = null
+        ) : Event()
     }
 }
 
 @HiltViewModel
 class MainScreenScreenViewModelImpl @Inject constructor(
+    private val catalogRepository: CatalogRepository,
     private val getUser: GetUser
 ) : MainScreenViewModel() {
+    init {
+        viewModelScope.launch {
+            getUser()?.let {
+                catalogRepository.updateCatalog().collect { result ->
+                    when (result) {
+                        is Resource.Error -> {
+                            eventChannel.send(Event.RequestLogin(result.message))
+                        }
+                        else -> Unit
+                    }
+                }
+            } ?: eventChannel.send(Event.RequestLogin())
+        }
+    }
+
     override fun onEvent(event: MainScreenEvent) {
         viewModelScope.launch {
             when (event) {
                 is MainScreenEvent.NavigationItemSelected -> {
                     state = state.copy(selectedPage = event.index)
-                }
-                is MainScreenEvent.CheckLogin -> {
-                    getUser() ?: eventChannel.send(Event.RequestLogin)
                 }
             }
         }

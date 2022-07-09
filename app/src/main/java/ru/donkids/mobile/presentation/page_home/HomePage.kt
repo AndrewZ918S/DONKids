@@ -1,23 +1,23 @@
 package ru.donkids.mobile.presentation.page_home
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,11 +37,15 @@ import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.yield
+import kotlinx.coroutines.launch
 import ru.donkids.mobile.R
+import ru.donkids.mobile.data.remote.DonKidsApi
 import ru.donkids.mobile.presentation.Destinations
+import ru.donkids.mobile.presentation.components.Price
+import ru.donkids.mobile.presentation.components.openCustomTab
+import ru.donkids.mobile.presentation.screen_main.LocalSnackbarHostState
 import ru.donkids.mobile.presentation.ui.theme.DONKidsTheme
-import ru.donkids.mobile.presentation.ui.theme.surfaceTone
+import ru.donkids.mobile.presentation.ui.theme.get
 
 @Composable
 fun HomePage(navController: NavController? = null) {
@@ -49,13 +53,39 @@ fun HomePage(navController: NavController? = null) {
         true -> object : HomePageViewModel() {}
         false -> hiltViewModel<HomePageViewModelImpl>()
     }
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = LocalSnackbarHostState.current
+    val context = LocalContext.current
     val state = viewModel.state
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(HomePageEvent.Refresh)
+        viewModel.events.collect { event ->
+            when (event) {
+                is HomePageViewModel.Event.OpenProduct -> {
+                    event.productId?.let { productId ->
+                        navController?.navigate(
+                            route = "${Destinations.PRODUCT}?id=${productId}"
+                        )
+                    } ?: event.productCode?.let { productCode ->
+                        navController?.navigate(
+                            route = "${Destinations.PRODUCT}?code=${productCode}"
+                        )
+                    } ?: Toast.makeText(context, R.string.not_found, Toast.LENGTH_SHORT).show()
+                }
+                is HomePageViewModel.Event.OpenUrl -> {
+                    openCustomTab(context, event.url)
+                }
+                is HomePageViewModel.Event.ShowMessage -> {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(event.message)
+                    }
+                }
+            }
+        }
+    }
+
+    Column(Modifier.verticalScroll(rememberScrollState())) {
         Box(
             Modifier
                 .padding(
@@ -63,15 +93,14 @@ fun HomePage(navController: NavController? = null) {
                     vertical = 8.dp
                 )
                 .background(
-                    color = colorScheme.surfaceTone(2),
+                    color = colorScheme.surface[2],
                     shape = CircleShape
                 )
         ) {
             Row(Modifier.padding(horizontal = 4.dp)) {
                 IconButton(
                     onClick = {
-                        navController?.navigate("${Destinations.PRODUCT}/-1")
-
+                        navController?.navigate("${Destinations.PRODUCT}/1024072")
                     }
                 ) {
                     Icon(
@@ -83,7 +112,6 @@ fun HomePage(navController: NavController? = null) {
                 Text(
                     text = stringResource(R.string.search_catalog),
                     color = colorScheme.onSurfaceVariant,
-                    maxLines = 1,
                     modifier = Modifier
                         .weight(1f)
                         .align(Alignment.CenterVertically)
@@ -100,49 +128,59 @@ fun HomePage(navController: NavController? = null) {
         ElevatedCard(
             modifier = Modifier.padding(16.dp),
             shape = RoundedCornerShape(12.dp),
-            onClick = {
-
-            }
+            onClick = { /* TODO */ }
         ) {
             Column {
                 Box(
                     modifier = Modifier.clip(RoundedCornerShape(12.dp)),
                     contentAlignment = Alignment.BottomCenter
                 ) {
-                    val pagerState = rememberPagerState()
+                    val banners = state.banners
+                    if (banners.isNotEmpty()) {
+                        val pagerState = rememberPagerState()
 
-                    LaunchedEffect(LocalContext.current) {
-                        while (true) {
-                            yield()
-                            delay(5000)
+                        LaunchedEffect(Unit) {
+                            val start = Int.MAX_VALUE / 2
 
-                            var nextPage = pagerState.currentPage + 1
-                            if (nextPage >= pagerState.pageCount)
-                                nextPage = 0
+                            pagerState.scrollToPage(
+                                page = start - start % banners.size
+                            )
 
-                            pagerState.animateScrollToPage(nextPage)
+                            while (pagerState.currentPage + 1 < Int.MAX_VALUE) {
+                                delay(5000)
+                                pagerState.animateScrollToPage(
+                                    page = pagerState.currentPage + 1
+                                )
+                            }
                         }
-                    }
 
-                    HorizontalPager(
-                        count = state.banners.size,
-                        state = pagerState
-                    ) {
-                        GlideImage(
-                            modifier = Modifier
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = rememberRipple(),
-                                    role = Role.Image,
-                                    onClick = { /*TODO*/ }
-                                ),
-                            imageModel = state.banners[it].imageLink,
-                            contentScale = ContentScale.FillWidth
-                        )
-                    }
-                    if (pagerState.pageCount > 1) {
+                        HorizontalPager(
+                            count = Int.MAX_VALUE,
+                            state = pagerState
+                        ) {
+                            val banner = banners[it % banners.size]
+                            GlideImage(
+                                modifier = Modifier
+                                    .clickable(
+                                        interactionSource = remember {
+                                            MutableInteractionSource()
+                                        },
+                                        indication = rememberRipple(),
+                                        role = Role.Image,
+                                        onClick = {
+                                            viewModel.onEvent(HomePageEvent.OpenBanner(banner))
+                                        }
+                                    ),
+                                imageModel = DonKidsApi.SITE_URL + banner.image,
+                                contentScale = ContentScale.FillWidth
+                            )
+                        }
                         HorizontalPagerIndicator(
                             pagerState = pagerState,
+                            pageCount = banners.size,
+                            pageIndexMapping = {
+                                it % banners.size
+                            },
                             modifier = Modifier
                                 .padding(8.dp)
                                 .background(
@@ -177,18 +215,85 @@ fun HomePage(navController: NavController? = null) {
                     ) {
                         Text(
                             text = stringResource(R.string.new_title),
-                            style = typography.titleMedium,
-                            maxLines = 1
+                            style = typography.titleMedium
                         )
                         Text(
                             text = stringResource(R.string.new_body),
-                            style = typography.bodyMedium,
-                            maxLines = 1
+                            style = typography.bodyMedium
                         )
                     }
                 }
             }
         }
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = stringResource(R.string.recently_watched),
+                style = typography.titleMedium
+            )
+            TextButton(onClick = { /*TODO*/ }) {
+                Text(stringResource(R.string.view_all))
+            }
+        }
+        val recentCount = state.history.size.coerceAtMost(8)
+        if (recentCount == 0) {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(220.dp)
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = stringResource(R.string.empty),
+                    style = typography.bodyMedium
+                )
+            }
+        }
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 8.dp)
+        ) {
+            items(recentCount) { index ->
+                val recent = state.history[index]
+                Box(
+                    Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = rememberRipple(),
+                            role = Role.Image,
+                            onClick = {
+                                viewModel.onEvent(HomePageEvent.OpenRecent(recent))
+                            }
+                        )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .width(128.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        ElevatedCard {
+                            GlideImage(
+                                imageModel = DonKidsApi.SITE_URL + recent.imageLink,
+                                contentScale = ContentScale.FillWidth
+                            )
+                        }
+                        Text(
+                            text = recent.abbreviation,
+                            style = typography.bodyMedium,
+                            maxLines = 2
+                        )
+                        Price(
+                            price = recent.price
+                        )
+                    }
+                }
+            }
+        }
+        Spacer(Modifier.height(16.dp))
     }
 }
 

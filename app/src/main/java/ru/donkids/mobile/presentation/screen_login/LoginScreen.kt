@@ -1,8 +1,5 @@
 package ru.donkids.mobile.presentation.screen_login
 
-import android.content.pm.PackageManager
-import android.net.Uri
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -36,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ru.donkids.mobile.R
 import ru.donkids.mobile.presentation.Destinations
+import ru.donkids.mobile.presentation.components.openCustomTab
 import ru.donkids.mobile.presentation.ui.theme.DONKidsTheme
 import ru.donkids.mobile.presentation.ui.theme.SystemBarColor
 
@@ -50,24 +48,13 @@ fun LoginScreen(navController: NavController? = null) {
     val state = viewModel.state
 
     LaunchedEffect(Unit) {
-        viewModel.events.collect {
-            when (it) {
+        viewModel.events.collect { event ->
+            when (event) {
                 is LoginScreenViewModel.Event.Proceed -> {
                     navController?.navigate(Destinations.MAIN)
                 }
                 is LoginScreenViewModel.Event.OpenUrl -> {
-                    val chromePkg = "com.android.chrome"
-                    val tabsIntent = CustomTabsIntent.Builder().build()
-                    try {
-                        context.packageManager.getPackageInfo(
-                            chromePkg,
-                            PackageManager.GET_ACTIVITIES
-                        )
-                        tabsIntent.intent.setPackage(chromePkg)
-                    } catch (e: PackageManager.NameNotFoundException) {
-                        e.printStackTrace()
-                    }
-                    tabsIntent.launchUrl(context, Uri.parse(it.url))
+                    openCustomTab(context, event.url)
                 }
             }
         }
