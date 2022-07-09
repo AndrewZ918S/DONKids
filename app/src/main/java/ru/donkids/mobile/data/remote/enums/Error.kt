@@ -1,8 +1,8 @@
 package ru.donkids.mobile.data.remote.enums
 
 enum class Error {
-    LoginError, // login-error // Неверный пользователь или пароль
-    LoginNeed, // login-need //
+    LoginError,
+    LoginNeed,
     CheckError,
     LoginIncorrect,
     Unknown

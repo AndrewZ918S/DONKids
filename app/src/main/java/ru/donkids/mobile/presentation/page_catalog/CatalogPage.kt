@@ -42,7 +42,7 @@ import ru.donkids.mobile.R
 import ru.donkids.mobile.data.remote.DonKidsApi
 import ru.donkids.mobile.presentation.Destinations
 import ru.donkids.mobile.presentation.ui.theme.DONKidsTheme
-import ru.donkids.mobile.presentation.ui.theme.surfaceTone
+import ru.donkids.mobile.presentation.ui.theme.get
 
 @Composable
 fun CatalogPage(navController: NavController? = null) {
@@ -56,7 +56,9 @@ fun CatalogPage(navController: NavController? = null) {
         viewModel.events.collect {
             when (it) {
                 is CatalogPageViewModel.Event.RequestLogin -> {
-                    navController?.navigate(Destinations.LOGIN)
+                    navController?.navigate(
+                        route = "${Destinations.LOGIN}?msg=${it.message}"
+                    )
                 }
             }
         }
@@ -74,7 +76,7 @@ fun CatalogPage(navController: NavController? = null) {
                     vertical = 8.dp
                 )
                 .background(
-                    color = colorScheme.surfaceTone(2),
+                    color = colorScheme.surface[2],
                     shape = CircleShape
                 )
         ) {
@@ -94,7 +96,6 @@ fun CatalogPage(navController: NavController? = null) {
                 Text(
                     text = stringResource(R.string.search_catalog),
                     color = colorScheme.onSurfaceVariant,
-                    maxLines = 1,
                     modifier = Modifier
                         .weight(1f)
                         .align(Alignment.CenterVertically)
@@ -188,13 +189,11 @@ fun CatalogPage(navController: NavController? = null) {
                     ) {
                         Text(
                             text = stringResource(R.string.new_title),
-                            style = typography.titleMedium,
-                            maxLines = 1
+                            style = typography.titleMedium
                         )
                         Text(
                             text = stringResource(R.string.new_body),
-                            style = typography.bodyMedium,
-                            maxLines = 1
+                            style = typography.bodyMedium
                         )
                     }
                 }

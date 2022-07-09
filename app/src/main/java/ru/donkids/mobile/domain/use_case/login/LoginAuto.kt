@@ -43,7 +43,7 @@ class LoginAuto @Inject constructor(
                     setUser(update)
                 } ?: emit(serverError())
             }
-            else -> {
+            Status.ERROR -> {
                 emit(serverError(response.error))
                 setUser(null)
             }

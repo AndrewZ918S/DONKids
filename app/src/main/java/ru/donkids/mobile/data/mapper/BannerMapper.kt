@@ -5,16 +5,16 @@ import ru.donkids.mobile.domain.model.Banner
 
 fun BannerEntity.toBanner(): Banner {
     return Banner(
-        pageLink = pageLink,
-        imageLink = imageLink,
-        vendorCode = vendorCode
+        page = page,
+        image = image,
+        code = code
     )
 }
 
 fun Banner.toBannerEntity(): BannerEntity {
     return BannerEntity(
-        pageLink = pageLink,
-        imageLink = imageLink,
-        vendorCode = vendorCode
+        page = page,
+        image = image,
+        code = code
     )
 }

@@ -4,8 +4,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import ru.donkids.mobile.data.local.database.CarouselDatabase
 import ru.donkids.mobile.data.local.database.CatalogDatabase
+import ru.donkids.mobile.data.local.database.HomeDatabase
 import ru.donkids.mobile.data.remote.DonKidsApi
 import ru.donkids.mobile.data.repository.CatalogRepositoryImpl
 import ru.donkids.mobile.data.repository.HomeRepositoryImpl
@@ -15,6 +15,7 @@ import ru.donkids.mobile.domain.repository.HomeRepository
 import ru.donkids.mobile.domain.repository.LoginRepository
 import ru.donkids.mobile.domain.use_case.HttpRequest
 import ru.donkids.mobile.domain.use_case.localize.ServerError
+import ru.donkids.mobile.domain.use_case.localize.StringResource
 import ru.donkids.mobile.domain.use_case.login.LoginAuto
 import javax.inject.Singleton
 
@@ -34,6 +35,7 @@ object RepositoryModule {
         db: CatalogDatabase,
         httpRequest: HttpRequest,
         serverError: ServerError,
+        stringResource: StringResource,
         loginAuto: LoginAuto
     ): CatalogRepository {
         return CatalogRepositoryImpl(
@@ -41,6 +43,7 @@ object RepositoryModule {
             db = db,
             httpRequest = httpRequest,
             serverError = serverError,
+            stringResource = stringResource,
             loginAuto = loginAuto
         )
     }
@@ -48,7 +51,7 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideHomeRepository(
-        db: CarouselDatabase,
+        db: HomeDatabase,
         httpRequest: HttpRequest
     ): HomeRepository {
         return HomeRepositoryImpl(

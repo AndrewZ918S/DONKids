@@ -23,7 +23,9 @@ abstract class CatalogPageViewModel : ViewModel() {
     open fun onEvent(event: CatalogPageEvent) = Unit
 
     sealed class Event {
-        object RequestLogin : Event()
+        data class RequestLogin(
+            val message: String
+        ) : Event()
     }
 }
 
@@ -43,7 +45,7 @@ class CatalogPageViewModelImpl @Inject constructor(
                         state = state.copy(categories = result.data)
                     }
                     is Resource.Error -> {
-                        eventChannel.send(Event.RequestLogin)
+                        eventChannel.send(Event.RequestLogin(result.message))
                     }
                     else -> Unit
                 }

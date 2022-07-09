@@ -6,8 +6,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import ru.donkids.mobile.data.local.database.CarouselDatabase
 import ru.donkids.mobile.data.local.database.CatalogDatabase
+import ru.donkids.mobile.data.local.database.HomeDatabase
 import javax.inject.Singleton
 
 @Module
@@ -25,11 +25,11 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideCarouselDatabase(app: Application): CarouselDatabase {
+    fun provideHomeDatabase(app: Application): HomeDatabase {
         return Room.databaseBuilder(
             app,
-            CarouselDatabase::class.java,
-            "carousel.db"
+            HomeDatabase::class.java,
+            "home.db"
         ).build()
     }
 }

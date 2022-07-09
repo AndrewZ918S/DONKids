@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f9bfa4456b5f7302ead8d4060bbc0972",
+    "identityHash": "712501631a9662d3ca67ab2998895ace",
     "entities": [
       {
         "tableName": "ProductEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `code` TEXT NOT NULL, `vendorCode` TEXT NOT NULL, `price` REAL, `description` TEXT NOT NULL, `isCategory` INTEGER NOT NULL, `properties` TEXT NOT NULL, `imageHash` TEXT NOT NULL, `imageLink` TEXT NOT NULL, `keywords` TEXT NOT NULL, `abbreviation` TEXT NOT NULL, `title` TEXT NOT NULL, `isAvailable` INTEGER NOT NULL, `size` TEXT NOT NULL, `parentId` INTEGER NOT NULL, `barcode` TEXT, `updateIndex` TEXT NOT NULL, `key` INTEGER, PRIMARY KEY(`key`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `code` TEXT NOT NULL, `vendorCode` TEXT NOT NULL, `price` REAL, `description` TEXT NOT NULL, `isCategory` INTEGER NOT NULL, `properties` TEXT NOT NULL, `imageHash` TEXT NOT NULL, `imageLink` TEXT NOT NULL, `keywords` TEXT NOT NULL, `abbreviation` TEXT NOT NULL, `title` TEXT NOT NULL, `isAvailable` INTEGER NOT NULL, `size` TEXT NOT NULL, `parentId` INTEGER NOT NULL, `barcode` TEXT, `updateIndex` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -109,17 +109,11 @@
             "columnName": "updateIndex",
             "affinity": "TEXT",
             "notNull": true
-          },
-          {
-            "fieldPath": "key",
-            "columnName": "key",
-            "affinity": "INTEGER",
-            "notNull": false
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "key"
+            "id"
           ],
           "autoGenerate": false
         },
@@ -130,7 +124,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f9bfa4456b5f7302ead8d4060bbc0972')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '712501631a9662d3ca67ab2998895ace')"
     ]
   }
 }
