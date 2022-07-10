@@ -41,4 +41,5 @@
     <string name="view_in_cart">Переглянути в кошику</string>
     <string name="add_to_favorites">Додати в обране</string>
     <string name="view_in_favorites">Переглянути в обраному</string>
+    <string name="from_category">Товари з цієї категорії</string>
 </resources>
