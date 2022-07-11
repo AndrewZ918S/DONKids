@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "712501631a9662d3ca67ab2998895ace",
+    "identityHash": "7a774aeb8f24f3beea8c277f060cc90c",
     "entities": [
       {
         "tableName": "ProductEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `code` TEXT NOT NULL, `vendorCode` TEXT NOT NULL, `price` REAL, `description` TEXT NOT NULL, `isCategory` INTEGER NOT NULL, `properties` TEXT NOT NULL, `imageHash` TEXT NOT NULL, `imageLink` TEXT NOT NULL, `keywords` TEXT NOT NULL, `abbreviation` TEXT NOT NULL, `title` TEXT NOT NULL, `isAvailable` INTEGER NOT NULL, `size` TEXT NOT NULL, `parentId` INTEGER NOT NULL, `barcode` TEXT, `updateIndex` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `code` TEXT NOT NULL, `vendorCode` TEXT NOT NULL, `price` REAL, `isCategory` INTEGER NOT NULL, `properties` TEXT NOT NULL, `imageHash` TEXT NOT NULL, `imageLink` TEXT NOT NULL, `keywords` TEXT NOT NULL, `abbreviation` TEXT NOT NULL, `title` TEXT NOT NULL, `isAvailable` INTEGER NOT NULL, `size` TEXT NOT NULL, `parentId` INTEGER NOT NULL, `barcode` TEXT, `updateIndex` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -31,12 +31,6 @@
             "columnName": "price",
             "affinity": "REAL",
             "notNull": false
-          },
-          {
-            "fieldPath": "description",
-            "columnName": "description",
-            "affinity": "TEXT",
-            "notNull": true
           },
           {
             "fieldPath": "isCategory",
@@ -124,7 +118,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '712501631a9662d3ca67ab2998895ace')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7a774aeb8f24f3beea8c277f060cc90c')"
     ]
   }
 }

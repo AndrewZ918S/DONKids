@@ -22,9 +22,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
-fun FocusTextField(
+fun InputTextField(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
+    onValueCommit: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     readOnly: Boolean = false,
@@ -54,6 +55,7 @@ fun FocusTextField(
                 keyboardAppearedSinceLastFocused = true
             } else if (keyboardAppearedSinceLastFocused) {
                 focusManager.clearFocus()
+                onValueCommit()
             }
         }
     }

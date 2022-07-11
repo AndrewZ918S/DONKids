@@ -1,27 +1,24 @@
 package ru.donkids.mobile.presentation.screen_product
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -38,20 +35,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.skydoves.landscapist.glide.GlideImage
 import ru.donkids.mobile.R
-import ru.donkids.mobile.presentation.components.FocusTextField
+import ru.donkids.mobile.presentation.components.InputTextField
 import ru.donkids.mobile.presentation.components.Price
 import ru.donkids.mobile.presentation.ui.theme.DONKidsTheme
 import ru.donkids.mobile.presentation.ui.theme.SystemBarColor
 import ru.donkids.mobile.presentation.ui.theme.get
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProductScreen(navController: NavController? = null) {
     val viewModel: ProductScreenViewModel = when (LocalView.current.isInEditMode) {
         true -> object : ProductScreenViewModel() {}
         false -> hiltViewModel<ProductScreenViewModelImpl>()
     }
-    val context = LocalContext.current
     val state = viewModel.state
 
     LaunchedEffect(Unit) {
@@ -64,14 +59,24 @@ fun ProductScreen(navController: NavController? = null) {
         }
     }
 
+    val topBarColors = TopAppBarDefaults.smallTopAppBarColors()
+    val topBarBehavior = TopAppBarDefaults.pinnedScrollBehavior(
+        state = rememberTopAppBarScrollState()
+    )
+
     SystemBarColor(
-        statusBarColor = colorScheme.surface,
+        statusBarColor = topBarColors
+            .containerColor(topBarBehavior.scrollFraction)
+            .value,
         navigationBarColor = colorScheme.surface[2]
     )
 
     Scaffold(
+        modifier = Modifier.nestedScroll(topBarBehavior.nestedScrollConnection),
         topBar = {
             SmallTopAppBar(
+                scrollBehavior = topBarBehavior,
+                colors = topBarColors,
                 title = {
                     Text(state.category)
                 },
@@ -98,31 +103,6 @@ fun ProductScreen(navController: NavController? = null) {
                             contentDescription = stringResource(R.string.search)
                         )
                     }
-                    /*IconButton(
-                        onClick = { *//* TODO *//* }
-                    ) {
-                        Icon(
-                            painter = painterResource(
-                                if (state.inCart) {
-                                    R.drawable.ic_cart_filled
-                                } else {
-                                    R.drawable.ic_cart_outline
-                                }
-                            ),
-                            contentDescription = stringResource(
-                                if (state.inCart) {
-                                    R.string.view_in_cart
-                                } else {
-                                    R.string.add_to_cart
-                                }
-                            ),
-                            tint = if (state.inCart) {
-                                colorScheme.primary
-                            } else {
-                                colorScheme.onSurfaceVariant
-                            }
-                        )
-                    }*/
                     IconButton(
                         onClick = {
                             viewModel.onEvent(ProductScreenEvent.ToggleFavorite)
@@ -154,45 +134,93 @@ fun ProductScreen(navController: NavController? = null) {
             )
         },
         content = {
-            Column(
-                Modifier
-                    .padding(it)
-                    .padding(
-                        horizontal = 16.dp,
-                        vertical = 4.dp
-                    )
-                    .verticalScroll(rememberScrollState())
+            LazyColumn(
+                Modifier.padding(it)
             ) {
-                ElevatedCard(
-                    Modifier.height(280.dp)
-                ) {
-                    if (!LocalView.current.isInEditMode) {
-                        GlideImage(
-                            imageModel = state.imageLink,
-                            contentScale = ContentScale.Crop
+                item {
+                    Column(
+                        Modifier.padding(
+                            horizontal = 16.dp
+                        )
+                    ) {
+                        Spacer(Modifier.height(12.dp))
+                        ElevatedCard(
+                            Modifier.height(280.dp)
+                        ) {
+                            if (!LocalView.current.isInEditMode) {
+                                GlideImage(
+                                    imageModel = state.imageLink,
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                        }
+                        Spacer(Modifier.height(16.dp))
+                        Text(
+                            text = state.title,
+                            style = typography.titleLarge,
+                            maxLines = 2
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        Price(
+                            price = state.price,
+                            priceStyle = typography.headlineLarge,
+                            currencyStyle = typography.headlineMedium
+                        )
+                        Spacer(Modifier.height(2.dp))
+                        Text(
+                            text = stringResource(R.string.specifications),
+                            style = typography.bodyLarge,
+                            modifier = Modifier.padding(vertical = 16.dp)
+                        )
+                        Row(
+                            Modifier.padding(vertical = 16.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.product_code),
+                                style = typography.bodyMedium,
+                                modifier = Modifier.padding(end = 32.dp),
+                                color = colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = state.productCode,
+                                style = typography.bodyMedium.copy(
+                                    textAlign = TextAlign.End
+                                ),
+                                modifier = Modifier.weight(1f),
+                                color = colorScheme.onSurface
+                            )
+                        }
+                    }
+                }
+
+                val fields = state.properties.keys.toMutableList()
+                items(fields.size) { index ->
+                    val key = fields[index]
+                    Row(
+                        Modifier.padding(16.dp)
+                    ) {
+                        Text(
+                            text = key,
+                            style = typography.bodyMedium,
+                            modifier = Modifier.padding(end = 32.dp),
+                            color = colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = state.properties.getValue(key),
+                            style = typography.bodyMedium.copy(
+                                textAlign = TextAlign.End
+                            ),
+                            modifier = Modifier.weight(1f),
+                            color = colorScheme.onSurface
                         )
                     }
                 }
-                Spacer(Modifier.height(16.dp))
+            }
+        },
+        bottomBar = {
+            BottomAppBar {
                 Text(
-                    text = state.title,
-                    style = typography.titleLarge,
-                    maxLines = 2
-                )
-                Spacer(Modifier.height(4.dp))
-                Row {
-                    Text(
-                        text = state.productCode,
-                        style = typography.labelLarge
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    Text(
-                        text = state.vendorCode,
-                        style = typography.bodyMedium
-                    )
-                }
-                Spacer(Modifier.height(8.dp))
-                Text(
+                    modifier = Modifier.weight(1f),
                     text = stringResource(
                         if (state.isAvailable) {
                             R.string.available
@@ -205,26 +233,14 @@ fun ProductScreen(navController: NavController? = null) {
                     } else {
                         colorScheme.onSurfaceVariant
                     },
-                    style = typography.bodySmall
+                    style = typography.bodyMedium.copy(
+                        textAlign = TextAlign.Center
+                    )
                 )
-                Spacer(Modifier.height(2.dp))
-            }
-        },
-        bottomBar = {
-            BottomAppBar {
-                Price(
-                    modifier = Modifier.padding(horizontal = 12.dp),
-                    price = state.price,
-                    color = if (state.isAvailable) {
-                        colorScheme.onSurface
-                    } else {
-                        colorScheme.onSurfaceVariant
-                    },
-                    priceStyle = typography.headlineMedium,
-                    currencyStyle = typography.headlineSmall
-                )
-                Spacer(Modifier.weight(1f))
-                AnimatedVisibility(state.isInCart) {
+                Spacer(Modifier.width(12.dp))
+                AnimatedVisibility(
+                    visible = state.isAvailable && state.isInCart
+                ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.border(
@@ -239,30 +255,13 @@ fun ProductScreen(navController: NavController? = null) {
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Remove,
-                                contentDescription = "Localized description"
+                                contentDescription = stringResource(R.string.remove_from_cart)
                             )
                         }
                         val inCart = state.inCart.toString()
                         val focusManager = LocalFocusManager.current
-                        var hadFocus by remember {
-                            mutableStateOf(false)
-                        }
-                        FocusTextField(
-                            modifier = Modifier
-                                .width(32.dp)
-                                .onFocusChanged {
-                                    val hasFocus = it.hasFocus
-                                    if (hadFocus && !hasFocus) {
-                                        Toast
-                                            .makeText(
-                                                context,
-                                                "Submit",
-                                                Toast.LENGTH_SHORT
-                                            )
-                                            .show()
-                                    }
-                                    hadFocus = hasFocus
-                                },
+                        InputTextField(
+                            modifier = Modifier.width(32.dp),
                             textStyle = TextStyle(
                                 textAlign = TextAlign.Center
                             ),
@@ -283,44 +282,49 @@ fun ProductScreen(navController: NavController? = null) {
                             ),
                             onValueChange = {
                                 viewModel.onEvent(
-                                    ProductScreenEvent.ChangeAmount(
+                                    ProductScreenEvent.EditCart(
                                         value = it.text
                                     )
                                 )
+                            },
+                            onValueCommit = {
+                                viewModel.onEvent(ProductScreenEvent.CommitCart)
                             }
                         )
                         IconButton(
                             onClick = {
-                                if (state.isInCart) {
-                                    viewModel.onEvent(ProductScreenEvent.GoToCart)
-                                } else {
-                                    viewModel.onEvent(ProductScreenEvent.AddToCart)
-                                }
+                                viewModel.onEvent(ProductScreenEvent.AddToCart)
                             }
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Add,
-                                contentDescription = "Localized description"
+                                contentDescription = stringResource(R.string.add_to_cart)
                             )
                         }
                     }
                 }
-                ExtendedFloatingActionButton(
-                    elevation = BottomAppBarDefaults.FloatingActionButtonElevation,
-                    onClick = {
-                        viewModel.onEvent(ProductScreenEvent.AddToCart)
-                    },
-                    modifier = Modifier.padding(horizontal = 12.dp)
-                ) {
-                    Text(
-                        stringResource(
+                if (state.isAvailable) {
+                    ExtendedFloatingActionButton(
+                        elevation = BottomAppBarDefaults.FloatingActionButtonElevation,
+                        onClick = {
                             if (state.isInCart) {
-                                R.string.buy_now
+                                viewModel.onEvent(ProductScreenEvent.GoToCart)
                             } else {
-                                R.string.add_to_cart
+                                viewModel.onEvent(ProductScreenEvent.AddToCart)
                             }
+                        },
+                        modifier = Modifier.padding(horizontal = 12.dp)
+                    ) {
+                        Text(
+                            stringResource(
+                                if (state.isInCart) {
+                                    R.string.buy_now
+                                } else {
+                                    R.string.add_to_cart
+                                }
+                            )
                         )
-                    )
+                    }
                 }
             }
         }

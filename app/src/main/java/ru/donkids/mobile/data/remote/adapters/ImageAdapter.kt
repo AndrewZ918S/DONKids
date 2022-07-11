@@ -28,5 +28,4 @@ internal class ImageAdapter {
     fun linkToStr(@ImageLink str: String): String {
         return str
     }
-
 }

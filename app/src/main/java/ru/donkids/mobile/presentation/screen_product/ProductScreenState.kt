@@ -6,8 +6,10 @@ data class ProductScreenState(
     val title: String = "",
     val productCode: String = "",
     val vendorCode: String = "",
+    val properties: Map<String, String> = HashMap(),
     val isAvailable: Boolean = false,
-    val isFavorite: Boolean = true,
-    val inCart: Boolean = true,
-    val price: Float? = null
+    val isFavorite: Boolean = false,
+    val isInCart: Boolean = false,
+    val inCart: Int = 1,
+    val price: Float? = 0f
 )

@@ -14,6 +14,7 @@ import ru.donkids.mobile.data.mapper.toRecent
 import ru.donkids.mobile.data.remote.DonKidsApi
 import ru.donkids.mobile.domain.repository.CatalogRepository
 import ru.donkids.mobile.domain.repository.HomeRepository
+import ru.donkids.mobile.domain.use_case.localize.ProductSpecs
 import ru.donkids.mobile.util.Resource
 import javax.inject.Inject
 
@@ -35,11 +36,12 @@ abstract class ProductScreenViewModel : ViewModel() {
 class ProductScreenViewModelImpl @Inject constructor(
     private val catalogRepository: CatalogRepository,
     private val homeRepository: HomeRepository,
+    private val productSpecs: ProductSpecs,
     savedStateHandle: SavedStateHandle
 ) : ProductScreenViewModel() {
     init {
         viewModelScope.launch {
-            val id = with (savedStateHandle.get<Int>("productId")) {
+            val id = with(savedStateHandle.get<Int>("productId")) {
                 if (this != -1) {
                     this
                 } else {
@@ -58,14 +60,17 @@ class ProductScreenViewModelImpl @Inject constructor(
                 when (product) {
                     is Resource.Success -> {
                         val data = product.data
+
                         state = state.copy(
                             imageLink = DonKidsApi.SITE_URL + data.imageLink,
                             title = data.title,
                             productCode = data.code,
                             vendorCode = data.vendorCode,
+                            properties = productSpecs(data.properties),
                             isAvailable = data.isAvailable,
                             price = data.price
                         )
+
                         catalogRepository.getProductById(data.parentId).collect { parent ->
                             when (parent) {
                                 is Resource.Success -> {
@@ -76,6 +81,7 @@ class ProductScreenViewModelImpl @Inject constructor(
                                 else -> Unit
                             }
                         }
+
                         homeRepository.updateHistory(data.toRecent())
                     }
                     else -> Unit
@@ -89,6 +95,48 @@ class ProductScreenViewModelImpl @Inject constructor(
             when (event) {
                 is ProductScreenEvent.OpenSearch -> {
                     eventChannel.send(Event.Search)
+                }
+                is ProductScreenEvent.GoToCart -> {
+                    /* TODO */
+                }
+                is ProductScreenEvent.CommitCart -> {
+                    /* TODO */
+                }
+                is ProductScreenEvent.AddToCart -> {
+                    state = if (state.isInCart) {
+                        state.copy(
+                            inCart = (state.inCart + 1).coerceAtMost(999)
+                        )
+                    } else {
+                        state.copy(
+                            isInCart = true,
+                            inCart = 1
+                        )
+                    }
+                }
+                is ProductScreenEvent.RemoveFromCart -> {
+                    state = if (state.inCart > 1) {
+                        state.copy(
+                            inCart = (state.inCart - 1)
+                        )
+                    } else {
+                        state.copy(
+                            isInCart = false,
+                            inCart = 0
+                        )
+                    }
+                }
+                is ProductScreenEvent.EditCart -> {
+                    state = state.copy(
+                        inCart = event.value
+                            .replace(Regex("[^\\d]+"), "")
+                            .removePrefix("0")
+                            .take(3)
+                            .toIntOrNull() ?: 0
+                    )
+                }
+                is ProductScreenEvent.ToggleFavorite -> {
+                    state = state.copy(isFavorite = !state.isFavorite)
                 }
             }
         }
