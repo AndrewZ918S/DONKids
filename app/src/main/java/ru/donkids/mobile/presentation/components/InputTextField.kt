@@ -45,33 +45,28 @@ fun InputTextField(
     val textColor = textStyle.color.takeOrElse {
         colors.textColor(enabled).value
     }
-    var isFocused by remember { mutableStateOf(false) }
-    var keyboardAppearedSinceLastFocused by remember { mutableStateOf(false) }
-    if (isFocused) {
-        val isImeVisible = WindowInsets.isImeVisible
-        val focusManager = LocalFocusManager.current
-        LaunchedEffect(isImeVisible) {
-            if (isImeVisible) {
-                keyboardAppearedSinceLastFocused = true
-            } else if (keyboardAppearedSinceLastFocused) {
-                focusManager.clearFocus()
-                onValueCommit()
-            }
+    var hadFocus by remember { mutableStateOf(false) }
+    val isImeVisible = WindowInsets.isImeVisible
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(isImeVisible) {
+        if (!isImeVisible && hadFocus) {
+            focusManager.clearFocus()
         }
     }
 
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier
-            .onFocusEvent {
-                if (isFocused != it.isFocused) {
-                    isFocused = it.isFocused
-                    if (isFocused) {
-                        keyboardAppearedSinceLastFocused = false
-                    }
-                }
-            },
+        modifier = modifier.onFocusEvent {
+            val hasFocus = it.hasFocus
+
+            if (hadFocus && !hasFocus) {
+                onValueCommit()
+            }
+
+            hadFocus = hasFocus
+        },
         enabled = enabled,
         readOnly = readOnly,
         textStyle = textStyle.copy(

@@ -2,7 +2,8 @@ package ru.donkids.mobile.presentation.screen_product
 
 sealed class ProductScreenEvent {
     object OpenSearch : ProductScreenEvent()
-    object ToggleFavorite : ProductScreenEvent()
+    object AddToFavorite : ProductScreenEvent()
+    object GoToFavorites : ProductScreenEvent()
     object GoToCart : ProductScreenEvent()
     object AddToCart : ProductScreenEvent()
     object RemoveFromCart : ProductScreenEvent()

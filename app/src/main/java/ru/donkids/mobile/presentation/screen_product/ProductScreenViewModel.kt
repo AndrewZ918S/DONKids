@@ -10,11 +10,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import ru.donkids.mobile.R
 import ru.donkids.mobile.data.mapper.toRecent
 import ru.donkids.mobile.data.remote.DonKidsApi
 import ru.donkids.mobile.domain.repository.CatalogRepository
 import ru.donkids.mobile.domain.repository.HomeRepository
 import ru.donkids.mobile.domain.use_case.localize.ProductSpecs
+import ru.donkids.mobile.domain.use_case.localize.StringResource
 import ru.donkids.mobile.util.Resource
 import javax.inject.Inject
 
@@ -29,6 +31,9 @@ abstract class ProductScreenViewModel : ViewModel() {
 
     sealed class Event {
         object Search : Event()
+        data class ShowMessage(
+            val message: String
+        ) : Event()
     }
 }
 
@@ -37,6 +42,7 @@ class ProductScreenViewModelImpl @Inject constructor(
     private val catalogRepository: CatalogRepository,
     private val homeRepository: HomeRepository,
     private val productSpecs: ProductSpecs,
+    private val stringResource: StringResource,
     savedStateHandle: SavedStateHandle
 ) : ProductScreenViewModel() {
     init {
@@ -96,11 +102,18 @@ class ProductScreenViewModelImpl @Inject constructor(
                 is ProductScreenEvent.OpenSearch -> {
                     eventChannel.send(Event.Search)
                 }
+                is ProductScreenEvent.GoToFavorites -> {
+                    /* TODO */
+                }
                 is ProductScreenEvent.GoToCart -> {
                     /* TODO */
                 }
                 is ProductScreenEvent.CommitCart -> {
-                    /* TODO */
+                    if (state.inCart < 1) {
+                        state = state.copy(
+                            inCart = 1
+                        )
+                    }
                 }
                 is ProductScreenEvent.AddToCart -> {
                     state = if (state.isInCart) {
@@ -108,6 +121,11 @@ class ProductScreenViewModelImpl @Inject constructor(
                             inCart = (state.inCart + 1).coerceAtMost(999)
                         )
                     } else {
+                        eventChannel.send(
+                            Event.ShowMessage(
+                                stringResource(R.string.added_to_cart)
+                            )
+                        )
                         state.copy(
                             isInCart = true,
                             inCart = 1
@@ -115,14 +133,9 @@ class ProductScreenViewModelImpl @Inject constructor(
                     }
                 }
                 is ProductScreenEvent.RemoveFromCart -> {
-                    state = if (state.inCart > 1) {
-                        state.copy(
+                    if (state.inCart > 1) {
+                        state = state.copy(
                             inCart = (state.inCart - 1)
-                        )
-                    } else {
-                        state.copy(
-                            isInCart = false,
-                            inCart = 0
                         )
                     }
                 }
@@ -135,8 +148,17 @@ class ProductScreenViewModelImpl @Inject constructor(
                             .toIntOrNull() ?: 0
                     )
                 }
-                is ProductScreenEvent.ToggleFavorite -> {
-                    state = state.copy(isFavorite = !state.isFavorite)
+                is ProductScreenEvent.AddToFavorite -> {
+                    if (!state.isFavorite) {
+                        eventChannel.send(
+                            Event.ShowMessage(
+                                stringResource(R.string.added_to_favorites)
+                            )
+                        )
+                        state = state.copy(
+                            isFavorite = true
+                        )
+                    }
                 }
             }
         }

@@ -43,18 +43,19 @@ import ru.donkids.mobile.data.remote.DonKidsApi
 import ru.donkids.mobile.presentation.Destinations
 import ru.donkids.mobile.presentation.components.Price
 import ru.donkids.mobile.presentation.components.openCustomTab
-import ru.donkids.mobile.presentation.screen_main.LocalSnackbarHostState
 import ru.donkids.mobile.presentation.ui.theme.DONKidsTheme
 import ru.donkids.mobile.presentation.ui.theme.get
 
 @Composable
-fun HomePage(navController: NavController? = null) {
+fun HomePage(
+    navController: NavController? = null,
+    snackbarHostState: SnackbarHostState? = null
+) {
     val viewModel: HomePageViewModel = when (LocalView.current.isInEditMode) {
         true -> object : HomePageViewModel() {}
         false -> hiltViewModel<HomePageViewModelImpl>()
     }
     val scope = rememberCoroutineScope()
-    val snackbarHostState = LocalSnackbarHostState.current
     val context = LocalContext.current
     val state = viewModel.state
 
@@ -78,7 +79,7 @@ fun HomePage(navController: NavController? = null) {
                 }
                 is HomePageViewModel.Event.ShowMessage -> {
                     scope.launch {
-                        snackbarHostState.showSnackbar(event.message)
+                        snackbarHostState?.showSnackbar(event.message)
                     }
                 }
             }
@@ -100,7 +101,7 @@ fun HomePage(navController: NavController? = null) {
             Row(Modifier.padding(horizontal = 4.dp)) {
                 IconButton(
                     onClick = {
-                        navController?.navigate("${Destinations.PRODUCT}/1024072")
+                        navController?.navigate("${Destinations.PRODUCT}?code=1517")
                     }
                 ) {
                     Icon(
@@ -278,16 +279,31 @@ fun HomePage(navController: NavController? = null) {
                         ElevatedCard {
                             GlideImage(
                                 imageModel = DonKidsApi.SITE_URL + recent.imageLink,
-                                contentScale = ContentScale.FillWidth
+                                contentScale = ContentScale.FillWidth,
+                                alpha = if (recent.isAvailable) {
+                                    1.0f
+                                } else {
+                                    0.5f
+                                }
                             )
                         }
                         Text(
                             text = recent.abbreviation,
                             style = typography.bodyMedium,
+                            color = if (recent.isAvailable) {
+                                colorScheme.onSurface
+                            } else {
+                                colorScheme.onSurfaceVariant
+                            },
                             maxLines = 2
                         )
                         Price(
-                            price = recent.price
+                            price = recent.price,
+                            color = if (recent.isAvailable) {
+                                colorScheme.onSurface
+                            } else {
+                                colorScheme.onSurfaceVariant
+                            }
                         )
                     }
                 }

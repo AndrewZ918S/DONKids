@@ -52,4 +52,6 @@
     <string name="age">Вік</string>
     <string name="for_age">від %s років</string>
     <string name="unit_cm">см</string>
+    <string name="added_to_cart">Товар доданий в кошик</string>
+    <string name="added_to_favorites">Товар доданий в обране</string>
 </resources>

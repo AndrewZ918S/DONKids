@@ -53,4 +53,6 @@
     <string name="age">Age</string>
     <string name="for_age">for %s+</string>
     <string name="unit_cm">cm</string>
+    <string name="added_to_cart">Product added to cart</string>
+    <string name="added_to_favorites">Product added to favorites</string>
 </resources>

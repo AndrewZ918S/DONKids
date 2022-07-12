@@ -52,4 +52,6 @@
     <string name="age">Возраст</string>
     <string name="for_age">от %s лет</string>
     <string name="unit_cm">см</string>
+    <string name="added_to_cart">Товар добавлен в корзину</string>
+    <string name="added_to_favorites">Товар добавлен в избранное</string>
 </resources>

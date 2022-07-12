@@ -15,6 +15,8 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -34,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.skydoves.landscapist.glide.GlideImage
+import kotlinx.coroutines.launch
 import ru.donkids.mobile.R
 import ru.donkids.mobile.presentation.components.InputTextField
 import ru.donkids.mobile.presentation.components.Price
@@ -42,18 +45,30 @@ import ru.donkids.mobile.presentation.ui.theme.SystemBarColor
 import ru.donkids.mobile.presentation.ui.theme.get
 
 @Composable
-fun ProductScreen(navController: NavController? = null) {
+fun ProductScreen(
+    navController: NavController? = null
+) {
     val viewModel: ProductScreenViewModel = when (LocalView.current.isInEditMode) {
         true -> object : ProductScreenViewModel() {}
         false -> hiltViewModel<ProductScreenViewModelImpl>()
     }
+    val scope = rememberCoroutineScope()
     val state = viewModel.state
 
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
+
     LaunchedEffect(Unit) {
-        viewModel.events.collect {
-            when (it) {
+        viewModel.events.collect { event ->
+            when (event) {
                 is ProductScreenViewModel.Event.Search -> {
                     /* TODO */
+                }
+                is ProductScreenViewModel.Event.ShowMessage -> {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(event.message)
+                    }
                 }
             }
         }
@@ -105,7 +120,11 @@ fun ProductScreen(navController: NavController? = null) {
                     }
                     IconButton(
                         onClick = {
-                            viewModel.onEvent(ProductScreenEvent.ToggleFavorite)
+                            if (state.isFavorite) {
+                                viewModel.onEvent(ProductScreenEvent.GoToFavorites)
+                            } else {
+                                viewModel.onEvent(ProductScreenEvent.AddToFavorite)
+                            }
                         }
                     ) {
                         Icon(
@@ -216,6 +235,9 @@ fun ProductScreen(navController: NavController? = null) {
                     }
                 }
             }
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
         },
         bottomBar = {
             BottomAppBar {
