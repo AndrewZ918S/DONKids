@@ -30,15 +30,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ru.donkids.mobile.R
-import ru.donkids.mobile.presentation.Destinations
 import ru.donkids.mobile.presentation.components.openCustomTab
+import ru.donkids.mobile.presentation.destinations.MainScreenDestination
 import ru.donkids.mobile.presentation.ui.theme.DONKidsTheme
 import ru.donkids.mobile.presentation.ui.theme.SystemBarColor
 
+@RootNavGraph
+@Destination(
+    navArgsDelegate = LoginScreenNavArgs::class
+)
 @Composable
-fun LoginScreen(navController: NavController? = null) {
+fun LoginScreen(
+    navigator: DestinationsNavigator? = null
+) {
     val viewModel: LoginScreenViewModel = when (LocalView.current.isInEditMode) {
         true -> object : LoginScreenViewModel() {}
         false -> hiltViewModel<LoginScreenScreenViewModelImpl>()
@@ -51,7 +59,7 @@ fun LoginScreen(navController: NavController? = null) {
         viewModel.events.collect { event ->
             when (event) {
                 is LoginScreenViewModel.Event.Proceed -> {
-                    navController?.navigate(Destinations.MAIN)
+                    navigator?.navigate(MainScreenDestination)
                 }
                 is LoginScreenViewModel.Event.OpenUrl -> {
                     openCustomTab(context, event.url)

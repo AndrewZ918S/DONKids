@@ -34,7 +34,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.launch
 import ru.donkids.mobile.R
@@ -44,9 +46,13 @@ import ru.donkids.mobile.presentation.ui.theme.DONKidsTheme
 import ru.donkids.mobile.presentation.ui.theme.SystemBarColor
 import ru.donkids.mobile.presentation.ui.theme.get
 
+@RootNavGraph
+@Destination(
+    navArgsDelegate = ProductScreenNavArgs::class
+)
 @Composable
 fun ProductScreen(
-    navController: NavController? = null
+    navigator: DestinationsNavigator? = null
 ) {
     val viewModel: ProductScreenViewModel = when (LocalView.current.isInEditMode) {
         true -> object : ProductScreenViewModel() {}
@@ -98,7 +104,7 @@ fun ProductScreen(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navController?.navigateUp()
+                            navigator?.navigateUp()
                         }
                     ) {
                         Icon(

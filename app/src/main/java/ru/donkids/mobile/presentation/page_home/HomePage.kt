@@ -1,6 +1,5 @@
 package ru.donkids.mobile.presentation.page_home
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -31,24 +30,31 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.donkids.mobile.R
 import ru.donkids.mobile.data.remote.DonKidsApi
-import ru.donkids.mobile.presentation.Destinations
 import ru.donkids.mobile.presentation.components.Price
 import ru.donkids.mobile.presentation.components.openCustomTab
+import ru.donkids.mobile.presentation.destinations.ProductScreenDestination
+import ru.donkids.mobile.presentation.ui.navigation.MainScreenNavGraph
 import ru.donkids.mobile.presentation.ui.theme.DONKidsTheme
+import ru.donkids.mobile.presentation.ui.theme.SystemBarColor
 import ru.donkids.mobile.presentation.ui.theme.get
 
+@MainScreenNavGraph(
+    start = true
+)
+@Destination
 @Composable
 fun HomePage(
-    navController: NavController? = null,
+    navigator: DestinationsNavigator? = null,
     snackbarHostState: SnackbarHostState? = null
 ) {
     val viewModel: HomePageViewModel = when (LocalView.current.isInEditMode) {
@@ -65,14 +71,18 @@ fun HomePage(
             when (event) {
                 is HomePageViewModel.Event.OpenProduct -> {
                     event.productId?.let { productId ->
-                        navController?.navigate(
-                            route = "${Destinations.PRODUCT}?id=${productId}"
+                        navigator?.navigate(
+                            ProductScreenDestination(
+                                id = productId
+                            )
                         )
                     } ?: event.productCode?.let { productCode ->
-                        navController?.navigate(
-                            route = "${Destinations.PRODUCT}?code=${productCode}"
+                        navigator?.navigate(
+                            ProductScreenDestination(
+                                code = productCode
+                            )
                         )
-                    } ?: Toast.makeText(context, R.string.not_found, Toast.LENGTH_SHORT).show()
+                    }
                 }
                 is HomePageViewModel.Event.OpenUrl -> {
                     openCustomTab(context, event.url)
@@ -85,6 +95,10 @@ fun HomePage(
             }
         }
     }
+
+    SystemBarColor(
+        statusBarColor = colorScheme.surface
+    )
 
     Column(Modifier.verticalScroll(rememberScrollState())) {
         Box(
@@ -101,7 +115,11 @@ fun HomePage(
             Row(Modifier.padding(horizontal = 4.dp)) {
                 IconButton(
                     onClick = {
-                        navController?.navigate("${Destinations.PRODUCT}?code=1517")
+                        navigator?.navigate(
+                            ProductScreenDestination(
+                                code = "1517"
+                            )
+                        )
                     }
                 ) {
                     Icon(

@@ -15,6 +15,7 @@ import ru.donkids.mobile.domain.model.User
 import ru.donkids.mobile.domain.use_case.login.LoginManual
 import ru.donkids.mobile.domain.use_case.validate.ValidateEmail
 import ru.donkids.mobile.domain.use_case.validate.ValidatePassword
+import ru.donkids.mobile.presentation.destinations.LoginScreenDestination
 import ru.donkids.mobile.util.Resource
 import javax.inject.Inject
 
@@ -46,14 +47,10 @@ class LoginScreenScreenViewModelImpl @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : LoginScreenViewModel() {
     init {
-        val message = savedStateHandle.get<String>("message")
+        val args = LoginScreenDestination.argsFrom(savedStateHandle)
 
         state = state.copy(
-            serverError = when (message) {
-                "null" -> ""
-                null -> ""
-                else -> message
-            }
+            serverError = args.message ?: ""
         )
     }
 

@@ -17,6 +17,7 @@ import ru.donkids.mobile.domain.repository.CatalogRepository
 import ru.donkids.mobile.domain.repository.HomeRepository
 import ru.donkids.mobile.domain.use_case.localize.ProductSpecs
 import ru.donkids.mobile.domain.use_case.localize.StringResource
+import ru.donkids.mobile.presentation.destinations.ProductScreenDestination
 import ru.donkids.mobile.util.Resource
 import javax.inject.Inject
 
@@ -47,18 +48,11 @@ class ProductScreenViewModelImpl @Inject constructor(
 ) : ProductScreenViewModel() {
     init {
         viewModelScope.launch {
-            val id = with(savedStateHandle.get<Int>("productId")) {
-                if (this != -1) {
-                    this
-                } else {
-                    null
-                }
-            }
-            val code = savedStateHandle.get<String>("productCode")
+            val args = ProductScreenDestination.argsFrom(savedStateHandle)
 
-            val flow = id?.let {
+            val flow = args.id?.let {
                 catalogRepository.getProductById(it, true)
-            } ?: code?.let {
+            } ?: args.code?.let {
                 catalogRepository.getProductByCode(it, true)
             } ?: return@launch
 
