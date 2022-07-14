@@ -25,10 +25,10 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.skydoves.landscapist.glide.GlideImage
 import ru.donkids.mobile.R
 import ru.donkids.mobile.data.remote.DonKidsApi
+import ru.donkids.mobile.presentation.components.DecorScaffold
 import ru.donkids.mobile.presentation.destinations.LoginScreenDestination
 import ru.donkids.mobile.presentation.ui.navigation.MainScreenNavGraph
 import ru.donkids.mobile.presentation.ui.theme.DONKidsTheme
-import ru.donkids.mobile.presentation.ui.theme.SystemBarColor
 
 @MainScreenNavGraph
 @Destination
@@ -61,14 +61,13 @@ fun CatalogPage(
         state = rememberTopAppBarScrollState()
     )
 
-    SystemBarColor(
-        statusBarColor = topBarColors
-            .containerColor(scrollFraction = topBarBehavior.scrollFraction)
-            .value
-    )
-
-    Scaffold(
+    DecorScaffold(
         modifier = Modifier.nestedScroll(topBarBehavior.nestedScrollConnection),
+        statusBarColor = topBarColors
+            .containerColor(
+                scrollFraction = topBarBehavior.scrollFraction
+            )
+            .value,
         topBar = {
             SmallTopAppBar(
                 scrollBehavior = topBarBehavior,

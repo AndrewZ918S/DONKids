@@ -6,8 +6,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
@@ -79,6 +77,17 @@ fun DONKidsTheme(
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
+    val view = LocalView.current
+
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (context as Activity).window
+            val insetsController = WindowCompat.getInsetsController(window, view)
+
+            insetsController.isAppearanceLightStatusBars = !darkTheme
+            insetsController.isAppearanceLightNavigationBars = !darkTheme
+        }
+    }
 
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
@@ -91,38 +100,9 @@ fun DONKidsTheme(
         else -> LightColors
     }
 
-    SystemBarColor(
-        statusBarColor = colorScheme.surface,
-        navigationBarColor = colorScheme.surface
-    )
-
     MaterialTheme(
         colorScheme = colorScheme,
         typography = AppTypography,
         content = content
     )
-}
-
-@Composable
-fun SystemBarColor(
-    statusBarColor: Color? = null,
-    navigationBarColor: Color? = null,
-    darkTheme: Boolean = isSystemInDarkTheme()
-) {
-    val context = LocalContext.current
-    val view = LocalView.current
-
-    if (view.isInEditMode)
-        return
-
-    SideEffect {
-        val window = (context as Activity).window
-        val insetsController = WindowCompat.getInsetsController(window, view)
-
-        insetsController.isAppearanceLightStatusBars = !darkTheme
-        insetsController.isAppearanceLightNavigationBars = !darkTheme
-
-        statusBarColor?.let { window.statusBarColor = it.toArgb() }
-        navigationBarColor?.let { window.navigationBarColor = it.toArgb() }
-    }
 }

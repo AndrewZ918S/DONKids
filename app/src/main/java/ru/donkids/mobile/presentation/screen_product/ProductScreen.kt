@@ -40,10 +40,10 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.launch
 import ru.donkids.mobile.R
+import ru.donkids.mobile.presentation.components.DecorScaffold
 import ru.donkids.mobile.presentation.components.InputTextField
 import ru.donkids.mobile.presentation.components.Price
 import ru.donkids.mobile.presentation.ui.theme.DONKidsTheme
-import ru.donkids.mobile.presentation.ui.theme.SystemBarColor
 import ru.donkids.mobile.presentation.ui.theme.get
 
 @RootNavGraph
@@ -85,15 +85,12 @@ fun ProductScreen(
         state = rememberTopAppBarScrollState()
     )
 
-    SystemBarColor(
+    DecorScaffold(
+        modifier = Modifier.nestedScroll(topBarBehavior.nestedScrollConnection),
         statusBarColor = topBarColors
             .containerColor(topBarBehavior.scrollFraction)
             .value,
-        navigationBarColor = colorScheme.surface[2]
-    )
-
-    Scaffold(
-        modifier = Modifier.nestedScroll(topBarBehavior.nestedScrollConnection),
+        navigationBarColor = colorScheme.surface[2],
         topBar = {
             SmallTopAppBar(
                 scrollBehavior = topBarBehavior,

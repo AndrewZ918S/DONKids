@@ -23,9 +23,9 @@ import com.ramcosta.composedestinations.manualcomposablecalls.composable
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.navigate
 import ru.donkids.mobile.presentation.NavGraphs
+import ru.donkids.mobile.presentation.components.DecorScaffold
 import ru.donkids.mobile.presentation.destinations.LoginScreenDestination
 import ru.donkids.mobile.presentation.ui.theme.DONKidsTheme
-import ru.donkids.mobile.presentation.ui.theme.SystemBarColor
 import ru.donkids.mobile.presentation.ui.theme.get
 
 @RootNavGraph(
@@ -55,11 +55,6 @@ fun MainScreen(
         }
     }
 
-    SystemBarColor(
-        statusBarColor = colorScheme.surface,
-        navigationBarColor = colorScheme.surface[2]
-    )
-
     val snackbarHostState = remember {
         SnackbarHostState()
     }
@@ -71,7 +66,7 @@ fun MainScreen(
         MainScreenNavigation.More,*/
     )
 
-    Scaffold(
+    DecorScaffold(
         content = { innerPadding ->
             DestinationsNavHost(
                 navGraph = NavGraphs.mainScreen,
@@ -93,6 +88,7 @@ fun MainScreen(
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         },
+        navigationBarColor = colorScheme.surface[2],
         bottomBar = {
             NavigationBar {
                 items.forEach { page ->

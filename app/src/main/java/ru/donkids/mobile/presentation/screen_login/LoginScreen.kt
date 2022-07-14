@@ -34,10 +34,10 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ru.donkids.mobile.R
+import ru.donkids.mobile.presentation.components.DecorSurface
 import ru.donkids.mobile.presentation.components.openCustomTab
 import ru.donkids.mobile.presentation.destinations.MainScreenDestination
 import ru.donkids.mobile.presentation.ui.theme.DONKidsTheme
-import ru.donkids.mobile.presentation.ui.theme.SystemBarColor
 
 @RootNavGraph
 @Destination(
@@ -68,12 +68,10 @@ fun LoginScreen(
         }
     }
 
-    SystemBarColor(
+    DecorSurface(
         statusBarColor = colorScheme.surface,
         navigationBarColor = colorScheme.surface
-    )
-
-    Surface {
+    ) {
         Column(
             modifier = Modifier.padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
