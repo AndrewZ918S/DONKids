@@ -66,7 +66,9 @@ class CatalogPageViewModelImpl @Inject constructor(
                         state = state.copy(categories = result.data)
                     }
                     is Resource.Error -> {
-                        eventChannel.send(Event.RequestLogin(result.message))
+                        if (result.isCritical) {
+                            eventChannel.send(Event.RequestLogin(result.message))
+                        }
                     }
                     else -> Unit
                 }

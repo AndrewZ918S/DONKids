@@ -42,7 +42,9 @@ class MainScreenScreenViewModelImpl @Inject constructor(
                 catalogRepository.updateCatalog().collect { result ->
                     when (result) {
                         is Resource.Error -> {
-                            eventChannel.send(Event.RequestLogin(result.message))
+                            if (result.isCritical) {
+                                eventChannel.send(Event.RequestLogin(result.message))
+                            }
                         }
                         else -> Unit
                     }

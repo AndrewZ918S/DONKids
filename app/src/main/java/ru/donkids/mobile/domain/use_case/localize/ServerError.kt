@@ -8,7 +8,7 @@ import javax.inject.Inject
 class ServerError @Inject constructor(
     private val stringResource: StringResource
 ) {
-    operator fun <T> invoke(errorType: Error? = Error.Unknown, critical: Boolean = true) = Resource.Error<T>(
+    operator fun <T> invoke(errorType: Error? = Error.Unknown, isCritical: Boolean = true) = Resource.Error<T>(
         message = stringResource(
             when (errorType) {
                 Error.CheckError -> R.string.check_error
@@ -18,6 +18,6 @@ class ServerError @Inject constructor(
                 else -> R.string.unknown_error
             }
         ),
-        critical = critical
+        isCritical = isCritical
     )
 }

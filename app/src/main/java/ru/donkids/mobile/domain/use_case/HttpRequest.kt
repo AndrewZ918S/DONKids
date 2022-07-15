@@ -28,7 +28,7 @@ class HttpRequest @Inject constructor(
                             else -> R.string.unknown_error
                         }
                     ),
-                    critical = false
+                    isCritical = false
                 )
             )
             e.printStackTrace()

@@ -54,7 +54,7 @@ class CatalogRepositoryImpl @Inject constructor(
                     }
                 }
                 is Resource.Error -> {
-                    emit(Resource.Error(result.message, result.critical))
+                    emit(Resource.Error(result.message, result.isCritical))
                 }
                 else -> Unit
             }
@@ -96,7 +96,7 @@ class CatalogRepositoryImpl @Inject constructor(
                     }
                 }
                 is Resource.Error -> {
-                    emit(Resource.Error(result.message, result.critical))
+                    emit(Resource.Error(result.message, result.isCritical))
                 }
                 else -> Unit
             }
@@ -146,7 +146,7 @@ class CatalogRepositoryImpl @Inject constructor(
                     }
                 }
                 is Resource.Error -> {
-                    emit(Resource.Error(result.message, result.critical))
+                    emit(Resource.Error(result.message, result.isCritical))
                 }
                 else -> Unit
             }
@@ -198,7 +198,7 @@ class CatalogRepositoryImpl @Inject constructor(
                     }
                 }
                 is Resource.Error -> {
-                    emit(Resource.Error(result.message, result.critical))
+                    emit(Resource.Error(result.message, result.isCritical))
                 }
                 else -> Unit
             }
