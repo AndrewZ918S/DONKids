@@ -1,8 +1,5 @@
 package ru.donkids.mobile.ui.screens.main
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,16 +9,12 @@ import kotlinx.coroutines.launch
 import ru.donkids.mobile.domain.repository.CatalogRepository
 import ru.donkids.mobile.domain.use_case.user.GetUser
 import ru.donkids.mobile.ui.screens.main.entity.MainScreenEvent
-import ru.donkids.mobile.ui.screens.main.entity.MainScreenState
 import ru.donkids.mobile.util.Resource
 import javax.inject.Inject
 
 abstract class MainScreenViewModel : ViewModel() {
     protected val eventChannel = Channel<Event>()
     val events = eventChannel.receiveAsFlow()
-
-    var state by mutableStateOf(MainScreenState())
-        protected set
 
     open fun onEvent(event: MainScreenEvent) = Unit
 
