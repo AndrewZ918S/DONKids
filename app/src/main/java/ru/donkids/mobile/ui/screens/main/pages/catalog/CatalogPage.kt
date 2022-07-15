@@ -43,7 +43,10 @@ fun CatalogPage(
                 is CatalogPageViewModel.Event.RequestLogin -> {
                     navigator?.navigate(
                         LoginScreenDestination(event.message)
-                    )
+                    ) {
+                        navigator.popBackStack()
+                        launchSingleTop = true
+                    }
                 }
                 is CatalogPageViewModel.Event.NavBack -> {
                     navController?.navigateUp()

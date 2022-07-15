@@ -50,7 +50,10 @@ fun MainScreen(
         viewModel.events.collect {
             when (it) {
                 is MainScreenViewModel.Event.RequestLogin -> {
-                    navigator?.navigate(LoginScreenDestination(it.message))
+                    navigator?.navigate(LoginScreenDestination(it.message)) {
+                        navigator.popBackStack()
+                        launchSingleTop = true
+                    }
                 }
             }
         }

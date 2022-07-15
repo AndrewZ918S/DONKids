@@ -56,7 +56,10 @@ fun LoginScreen(
         viewModel.events.collect { event ->
             when (event) {
                 is LoginScreenViewModel.Event.Proceed -> {
-                    navigator?.navigate(MainScreenDestination)
+                    navigator?.navigate(MainScreenDestination) {
+                        navigator.popBackStack()
+                        launchSingleTop = true
+                    }
                 }
                 is LoginScreenViewModel.Event.OpenUrl -> {
                     openCustomTab(context, event.url)
