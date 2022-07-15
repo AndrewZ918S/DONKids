@@ -46,19 +46,13 @@ class HomePageViewModelImpl @Inject constructor(
     private fun refresh() {
         viewModelScope.launch {
             homeRepository.getHistory().collect { result ->
-                when (result) {
-                    is Resource.Success -> {
-                        state = state.copy(history = result.data)
-                    }
-                    else -> Unit
+                if (result is Resource.Success) {
+                    state = state.copy(history = result.data)
                 }
             }
             homeRepository.getBanners().collect { result ->
-                when (result) {
-                    is Resource.Success -> {
-                        state = state.copy(banners = result.data)
-                    }
-                    else -> Unit
+                if (result is Resource.Success) {
+                    state = state.copy(banners = result.data)
                 }
             }
         }

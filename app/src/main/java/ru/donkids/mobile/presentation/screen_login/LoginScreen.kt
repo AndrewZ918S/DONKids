@@ -1,11 +1,8 @@
 package ru.donkids.mobile.presentation.screen_login
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
@@ -20,15 +17,12 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
@@ -37,6 +31,7 @@ import ru.donkids.mobile.R
 import ru.donkids.mobile.presentation.components.DecorSurface
 import ru.donkids.mobile.presentation.components.openCustomTab
 import ru.donkids.mobile.presentation.destinations.MainScreenDestination
+import ru.donkids.mobile.presentation.screen_login.components.LoginHeader
 import ru.donkids.mobile.presentation.ui.theme.DONKidsTheme
 
 @RootNavGraph
@@ -76,31 +71,9 @@ fun LoginScreen(
             modifier = Modifier.padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AnimatedVisibility(
+            LoginHeader(
                 visible = !WindowInsets.isImeVisible || LocalView.current.isInEditMode
-            ) {
-                Column {
-                    Spacer(Modifier.height(32.dp))
-                    Icon(
-                        imageVector = Icons.Filled.AccountCircle,
-                        tint = colorScheme.onSurface,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(96.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(Modifier.height(32.dp))
-                    Text(
-                        text = stringResource(R.string.auth),
-                        color = colorScheme.onSurface,
-                        style = TextStyle(
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 36.sp
-                        )
-                    )
-                    Spacer(Modifier.height(48.dp))
-                }
-            }
+            )
             OutlinedTextField(
                 value = state.email,
                 onValueChange = {
