@@ -1,5 +1,7 @@
 package ru.donkids.mobile.presentation.page_catalog
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -12,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -45,12 +48,15 @@ fun CatalogPage(
     val state = viewModel.state
 
     LaunchedEffect(Unit) {
-        viewModel.events.collect {
-            when (it) {
+        viewModel.events.collect { event ->
+            when (event) {
                 is CatalogPageViewModel.Event.RequestLogin -> {
                     navigator?.navigate(
-                        LoginScreenDestination(it.message)
+                        LoginScreenDestination(event.message)
                     )
+                }
+                is CatalogPageViewModel.Event.NavBack -> {
+                    navController?.navigateUp()
                 }
             }
         }
@@ -60,6 +66,10 @@ fun CatalogPage(
     val topBarBehavior = TopAppBarDefaults.pinnedScrollBehavior(
         state = rememberTopAppBarScrollState()
     )
+
+    BackHandler {
+        viewModel.onEvent(CatalogPageEvent.NavBack)
+    }
 
     DecorScaffold(
         modifier = Modifier.nestedScroll(topBarBehavior.nestedScrollConnection),
@@ -75,7 +85,7 @@ fun CatalogPage(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navController?.navigateUp()
+                            viewModel.onEvent(CatalogPageEvent.NavBack)
                         }
                     ) {
                         Icon(
@@ -85,7 +95,25 @@ fun CatalogPage(
                     }
                 },
                 title = {
-                    Text(text = "Categories")
+                    Text(
+                        text = state.destination?.abbreviation ?: stringResource(R.string.categories)
+                    )
+                },
+                actions = {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_search),
+                            contentDescription = stringResource(R.string.search),
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_scanner),
+                            contentDescription = stringResource(R.string.scan),
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 }
             )
         },
@@ -97,24 +125,33 @@ fun CatalogPage(
                 items(state.categories.size) { index ->
                     val category = state.categories[index]
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    ) {
-                        ElevatedCard(
-                            shape = RoundedCornerShape(8.dp),
+                    if (category.parentId == (state.destination?.id ?: 0)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
-                                .padding(8.dp)
-                                .size(48.dp)
+                                .padding(horizontal = 8.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .clickable {
+                                    viewModel.onEvent(CatalogPageEvent.SelectCategory(category.id))
+                                }
                         ) {
-                            GlideImage(
-                                imageModel = DonKidsApi.SITE_URL + category.imageLink
+                            ElevatedCard(
+                                shape = RoundedCornerShape(8.dp),
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .size(48.dp)
+                            ) {
+                                GlideImage(
+                                    imageModel = DonKidsApi.SITE_URL + category.imageLink
+                                )
+                            }
+                            Text(
+                                text = category.abbreviation,
+                                style = typography.bodyMedium,
+                                modifier = Modifier.padding(end = 8.dp),
+                                maxLines = 2
                             )
                         }
-                        Text(
-                            text = category.abbreviation,
-                            style = typography.bodyMedium
-                        )
                     }
                 }
             }

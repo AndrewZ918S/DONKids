@@ -54,4 +54,5 @@
     <string name="unit_cm">см</string>
     <string name="added_to_cart">Товар доданий в кошик</string>
     <string name="added_to_favorites">Товар доданий в обране</string>
+    <string name="categories">Категорії</string>
 </resources>

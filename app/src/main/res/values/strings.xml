@@ -55,4 +55,5 @@
     <string name="unit_cm">cm</string>
     <string name="added_to_cart">Product added to cart</string>
     <string name="added_to_favorites">Product added to favorites</string>
+    <string name="categories">Categories</string>
 </resources>

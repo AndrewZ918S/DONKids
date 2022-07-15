@@ -26,6 +26,8 @@ abstract class CatalogPageViewModel : ViewModel() {
         data class RequestLogin(
             val message: String
         ) : Event()
+
+        object NavBack : Event()
     }
 }
 
@@ -35,6 +37,25 @@ class CatalogPageViewModelImpl @Inject constructor(
 ) : CatalogPageViewModel() {
     init {
         getCategories()
+    }
+
+    override fun onEvent(event: CatalogPageEvent) {
+        viewModelScope.launch {
+            when (event) {
+                is CatalogPageEvent.SelectCategory -> {
+                    state = state.copy(
+                        destination = state.categories.find { it.id == event.id }
+                    )
+                }
+                is CatalogPageEvent.NavBack -> {
+                    state.destination?.let { child ->
+                        state = state.copy(
+                            destination = state.categories.find { it.id == child.parentId }
+                        )
+                    } ?: eventChannel.send(Event.NavBack)
+                }
+            }
+        }
     }
 
     private fun getCategories() {
