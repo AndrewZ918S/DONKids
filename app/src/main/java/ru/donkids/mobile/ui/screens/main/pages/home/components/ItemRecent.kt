@@ -37,19 +37,19 @@ fun ItemRecent(
                 .width(128.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            ElevatedCard {
+            ElevatedCard(
+                Modifier.alpha(
+                    if (recent.isAvailable) {
+                        1.0f
+                    } else {
+                        0.5f
+                    }
+                )
+            ) {
                 GlideImage(
                     imageModel = DonKidsApi.SITE_URL + recent.imageLink,
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .background(Color.White)
-                        .alpha(
-                            if (recent.isAvailable) {
-                                1.0f
-                            } else {
-                                0.5f
-                            }
-                        )
+                    modifier = Modifier.background(Color.White)
                 )
             }
             Text(

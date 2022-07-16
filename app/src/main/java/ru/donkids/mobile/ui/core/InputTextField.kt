@@ -1,6 +1,7 @@
 package ru.donkids.mobile.ui.core
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.text.BasicTextField
@@ -11,6 +12,8 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.SolidColor
@@ -23,13 +26,72 @@ import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
 fun InputTextField(
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
-    onValueCommit: () -> Unit,
     modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit,
+    onValueCommit: () -> Unit = {},
+    requestFocus: Boolean = false,
     enabled: Boolean = true,
     readOnly: Boolean = false,
     textStyle: TextStyle = LocalTextStyle.current,
+    placeholder: @Composable (() -> Unit)? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    singleLine: Boolean = false,
+    maxLines: Int = Int.MAX_VALUE,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    onTextLayout: (TextLayoutResult) -> Unit = {},
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    cursorBrush: Brush = SolidColor(colorScheme.primary),
+    decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit =
+        @Composable { innerTextField -> innerTextField() }
+) {
+    var textFieldValueState by remember { mutableStateOf(TextFieldValue(text = value)) }
+    val textFieldValue = textFieldValueState.copy(text = value)
+    var lastTextValue by remember(value) { mutableStateOf(value) }
+
+    InputTextField(
+        modifier = modifier,
+        value = textFieldValue,
+        onValueChange = { newTextFieldValueState ->
+            textFieldValueState = newTextFieldValueState
+
+            val stringChangedSinceLastInvocation = lastTextValue != newTextFieldValueState.text
+            lastTextValue = newTextFieldValueState.text
+
+            if (stringChangedSinceLastInvocation) {
+                onValueChange(newTextFieldValueState.text)
+            }
+        },
+        onValueCommit = onValueCommit,
+        requestFocus = requestFocus,
+        enabled = enabled,
+        readOnly = readOnly,
+        textStyle = textStyle,
+        placeholder = placeholder,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        singleLine = singleLine,
+        maxLines = maxLines,
+        visualTransformation = visualTransformation,
+        onTextLayout = onTextLayout,
+        interactionSource = interactionSource,
+        cursorBrush = cursorBrush,
+        decorationBox = decorationBox
+    )
+}
+
+@Composable
+fun InputTextField(
+    modifier: Modifier = Modifier,
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    onValueCommit: () -> Unit = {},
+    requestFocus: Boolean = false,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    textStyle: TextStyle = LocalTextStyle.current,
+    placeholder: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     singleLine: Boolean = false,
@@ -45,41 +107,56 @@ fun InputTextField(
     val textColor = textStyle.color.takeOrElse {
         colors.textColor(enabled).value
     }
+
     var hadFocus by remember { mutableStateOf(false) }
     val isImeVisible = WindowInsets.isImeVisible
+
+    val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(isImeVisible) {
-        if (!isImeVisible && hadFocus) {
-            focusManager.clearFocus()
+        if (!isImeVisible) {
+            if (hadFocus) {
+                focusManager.clearFocus()
+            } else if (requestFocus) {
+                focusRequester.requestFocus()
+            }
         }
     }
 
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier.onFocusEvent {
-            val hasFocus = it.hasFocus
+    Box {
+        if (placeholder != null && value.text.isEmpty()) {
+            placeholder()
+        }
 
-            if (hadFocus && !hasFocus) {
-                onValueCommit()
-            }
+        BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = modifier
+                .focusRequester(focusRequester)
+                .onFocusEvent {
+                    val hasFocus = it.hasFocus
 
-            hadFocus = hasFocus
-        },
-        enabled = enabled,
-        readOnly = readOnly,
-        textStyle = textStyle.copy(
-            color = textColor
-        ),
-        cursorBrush = cursorBrush,
-        keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions,
-        singleLine = singleLine,
-        maxLines = maxLines,
-        visualTransformation = visualTransformation,
-        onTextLayout = onTextLayout,
-        interactionSource = interactionSource,
-        decorationBox = decorationBox
-    )
+                    if (hadFocus && !hasFocus) {
+                        onValueCommit()
+                    }
+
+                    hadFocus = hasFocus
+                },
+            enabled = enabled,
+            readOnly = readOnly,
+            textStyle = textStyle.copy(
+                color = textColor
+            ),
+            cursorBrush = cursorBrush,
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
+            singleLine = singleLine,
+            maxLines = maxLines,
+            visualTransformation = visualTransformation,
+            onTextLayout = onTextLayout,
+            interactionSource = interactionSource,
+            decorationBox = decorationBox
+        )
+    }
 }

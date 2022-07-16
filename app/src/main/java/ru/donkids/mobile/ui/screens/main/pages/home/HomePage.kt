@@ -29,6 +29,7 @@ import ru.donkids.mobile.ui.core.openCustomTab
 import ru.donkids.mobile.ui.navigation.MainScreenNavGraph
 import ru.donkids.mobile.ui.screens.destinations.CatalogPageDestination
 import ru.donkids.mobile.ui.screens.destinations.ProductScreenDestination
+import ru.donkids.mobile.ui.screens.destinations.SearchScreenDestination
 import ru.donkids.mobile.ui.screens.main.entity.MainScreenNavigation
 import ru.donkids.mobile.ui.screens.main.pages.home.components.Carousel
 import ru.donkids.mobile.ui.screens.main.pages.home.components.History
@@ -64,7 +65,7 @@ fun HomePage(
                             )
                         )
                     } ?: event.productCode?.let { productCode ->
-                        parcel?.navController?.navigate(
+                        parcel?.navigator?.navigate(
                             ProductScreenDestination(
                                 code = productCode
                             )
@@ -90,17 +91,6 @@ fun HomePage(
     ) {
         Column(Modifier.verticalScroll(scrollState)) {
             SearchBar(
-                leadingIcon = {
-                    IconButton(
-                        onClick = { /*TODO*/ }
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_search),
-                            contentDescription = stringResource(R.string.search),
-                            tint = colorScheme.onSurface
-                        )
-                    }
-                },
                 text = stringResource(R.string.search_catalog),
                 trailingIcon = {
                     IconButton(
@@ -113,7 +103,9 @@ fun HomePage(
                         )
                     }
                 }
-            )
+            ) {
+                parcel?.navigator?.navigate(SearchScreenDestination)
+            }
             Carousel(
                 banners = state.banners,
                 onBanner = { banner ->
