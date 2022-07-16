@@ -79,9 +79,11 @@ fun MainScreen(
                 items.forEach { page ->
                     composable(page.destination) {
                         page.content(
-                            navigator,
-                            snackbarHostState,
-                            navController
+                            parcel = MainScreenNavigation.Parcel(
+                                navigator = navigator,
+                                snackbarState = snackbarHostState,
+                                navController = navController
+                            )
                         )
                     }
                 }

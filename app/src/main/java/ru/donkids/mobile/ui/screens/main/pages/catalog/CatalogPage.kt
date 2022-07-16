@@ -12,13 +12,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import ru.donkids.mobile.R
 import ru.donkids.mobile.ui.core.DecorScaffold
 import ru.donkids.mobile.ui.navigation.MainScreenNavGraph
 import ru.donkids.mobile.ui.screens.destinations.LoginScreenDestination
+import ru.donkids.mobile.ui.screens.main.entity.MainScreenNavigation
 import ru.donkids.mobile.ui.screens.main.pages.catalog.components.CategoryGrid
 import ru.donkids.mobile.ui.screens.main.pages.catalog.entity.CatalogPageEvent
 import ru.donkids.mobile.ui.screens.main.pages.catalog.entity.CatalogPageNavArgs
@@ -30,9 +29,7 @@ import ru.donkids.mobile.ui.theme.DONKidsTheme
 )
 @Composable
 fun CatalogPage(
-    navigator: DestinationsNavigator? = null,
-    snackbarHostState: SnackbarHostState? = null,
-    navController: NavController? = null
+    parcel: MainScreenNavigation.Parcel? = null,
 ) {
     val viewModel: CatalogPageViewModel = when (LocalView.current.isInEditMode) {
         true -> object : CatalogPageViewModel() {}
@@ -44,15 +41,17 @@ fun CatalogPage(
         viewModel.events.collect { event ->
             when (event) {
                 is CatalogPageViewModel.Event.RequestLogin -> {
-                    navigator?.navigate(
-                        LoginScreenDestination(event.message)
-                    ) {
-                        navigator.popBackStack()
-                        launchSingleTop = true
+                    parcel?.navigator?.let { navigator ->
+                        navigator.navigate(
+                            LoginScreenDestination(event.message)
+                        ) {
+                            navigator.popBackStack()
+                            launchSingleTop = true
+                        }
                     }
                 }
                 is CatalogPageViewModel.Event.NavBack -> {
-                    navController?.navigateUp()
+                    parcel?.navController?.navigateUp()
                 }
             }
         }

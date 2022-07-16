@@ -17,9 +17,7 @@ import ru.donkids.mobile.ui.screens.main.pages.home.HomePage
 sealed class MainScreenNavigation<T>(
     val destination: DestinationSpec<T>,
     val content: @Composable (
-        DestinationsNavigator?,
-        SnackbarHostState,
-        NavController?
+        parcel: Parcel?
     ) -> Unit,
     @StringRes
     val label: Int,
@@ -28,13 +26,17 @@ sealed class MainScreenNavigation<T>(
     @DrawableRes
     val defaultIcon: Int
 ) {
+    data class Parcel(
+        val navigator: DestinationsNavigator? = null,
+        val snackbarState: SnackbarHostState? = null,
+        val navController: NavController? = null,
+    )
+
     object Home : MainScreenNavigation<Unit>(
         destination = HomePageDestination,
-        content = { navigator, snackbarState, navController ->
+        content = { parcel ->
             HomePage(
-                navigator = navigator,
-                snackbarHostState = snackbarState,
-                navController
+                parcel = parcel
             )
         },
         label = R.string.home,
@@ -44,11 +46,9 @@ sealed class MainScreenNavigation<T>(
 
     object Catalog : MainScreenNavigation<CatalogPageNavArgs>(
         destination = CatalogPageDestination,
-        content = { navigator, snackbarState, navController ->
+        content = { parcel ->
             CatalogPage(
-                navigator = navigator,
-                snackbarHostState = snackbarState,
-                navController = navController
+                parcel = parcel
             )
         },
         label = R.string.catalog,

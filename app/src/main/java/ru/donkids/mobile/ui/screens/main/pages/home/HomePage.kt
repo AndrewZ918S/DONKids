@@ -8,7 +8,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -20,10 +19,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.navigate
 import kotlinx.coroutines.launch
 import ru.donkids.mobile.R
@@ -32,6 +29,7 @@ import ru.donkids.mobile.ui.core.openCustomTab
 import ru.donkids.mobile.ui.navigation.MainScreenNavGraph
 import ru.donkids.mobile.ui.screens.destinations.CatalogPageDestination
 import ru.donkids.mobile.ui.screens.destinations.ProductScreenDestination
+import ru.donkids.mobile.ui.screens.main.entity.MainScreenNavigation
 import ru.donkids.mobile.ui.screens.main.pages.home.components.Carousel
 import ru.donkids.mobile.ui.screens.main.pages.home.components.History
 import ru.donkids.mobile.ui.screens.main.pages.home.components.SearchBar
@@ -44,9 +42,7 @@ import ru.donkids.mobile.ui.theme.DONKidsTheme
 @Destination
 @Composable
 fun HomePage(
-    navigator: DestinationsNavigator? = null,
-    snackbarHostState: SnackbarHostState? = null,
-    navController: NavController? = null
+    parcel: MainScreenNavigation.Parcel? = null
 ) {
     val viewModel: HomePageViewModel = when (LocalView.current.isInEditMode) {
         true -> object : HomePageViewModel() {}
@@ -62,13 +58,13 @@ fun HomePage(
             when (event) {
                 is HomePageViewModel.Event.OpenProduct -> {
                     event.productId?.let { productId ->
-                        navigator?.navigate(
+                        parcel?.navigator?.navigate(
                             ProductScreenDestination(
                                 id = productId
                             )
                         )
                     } ?: event.productCode?.let { productCode ->
-                        navigator?.navigate(
+                        parcel?.navController?.navigate(
                             ProductScreenDestination(
                                 code = productCode
                             )
@@ -80,7 +76,7 @@ fun HomePage(
                 }
                 is HomePageViewModel.Event.ShowMessage -> {
                     scope.launch {
-                        snackbarHostState?.showSnackbar(event.message)
+                        parcel?.snackbarState?.showSnackbar(event.message)
                     }
                 }
             }
@@ -124,16 +120,17 @@ fun HomePage(
                     viewModel.onEvent(HomePageEvent.OpenBanner(banner))
                 }
             ) {
-                navController?.navigate(
-                    direction = CatalogPageDestination(
-                        destinationId = 1024764 // New toys
-                    )
-                ) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
+                parcel?.navController?.let { navController ->
+                    navController.navigate(
+                        direction = CatalogPageDestination(
+                            destinationId = 1024764 // New toys
+                        )
+                    ) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
                     }
-                    launchSingleTop = true
-                    restoreState = true
                 }
             }
             History(
