@@ -43,6 +43,7 @@ import ru.donkids.mobile.R
 import ru.donkids.mobile.ui.core.DecorScaffold
 import ru.donkids.mobile.ui.core.InputTextField
 import ru.donkids.mobile.ui.core.Price
+import ru.donkids.mobile.ui.screens.destinations.SearchScreenDestination
 import ru.donkids.mobile.ui.screens.product.entity.ProductScreenEvent
 import ru.donkids.mobile.ui.screens.product.entity.ProductScreenNavArgs
 import ru.donkids.mobile.ui.theme.DONKidsTheme
@@ -70,9 +71,6 @@ fun ProductScreen(
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                is ProductScreenViewModel.Event.Search -> {
-                    /* TODO */
-                }
                 is ProductScreenViewModel.Event.ShowMessage -> {
                     scope.launch {
                         snackbarHostState.showSnackbar(event.message)
@@ -115,7 +113,7 @@ fun ProductScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            viewModel.onEvent(ProductScreenEvent.OpenSearch)
+                            navigator?.navigate(SearchScreenDestination)
                         }
                     ) {
                         Icon(

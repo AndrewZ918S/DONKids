@@ -33,7 +33,6 @@ abstract class ProductScreenViewModel : ViewModel() {
     open fun onEvent(event: ProductScreenEvent) = Unit
 
     sealed class Event {
-        object Search : Event()
         data class ShowMessage(
             val message: String
         ) : Event()
@@ -95,9 +94,6 @@ class ProductScreenViewModelImpl @Inject constructor(
     override fun onEvent(event: ProductScreenEvent) {
         viewModelScope.launch {
             when (event) {
-                is ProductScreenEvent.OpenSearch -> {
-                    eventChannel.send(Event.Search)
-                }
                 is ProductScreenEvent.GoToFavorites -> {
                     /* TODO */
                 }
