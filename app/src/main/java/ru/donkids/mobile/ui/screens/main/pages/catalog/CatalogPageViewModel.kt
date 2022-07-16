@@ -3,6 +3,7 @@ package ru.donkids.mobile.ui.screens.main.pages.catalog
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,6 +11,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import ru.donkids.mobile.domain.repository.CatalogRepository
+import ru.donkids.mobile.ui.screens.destinations.CatalogPageDestination
 import ru.donkids.mobile.ui.screens.main.pages.catalog.entity.CatalogPageEvent
 import ru.donkids.mobile.ui.screens.main.pages.catalog.entity.CatalogPageState
 import ru.donkids.mobile.util.Resource
@@ -35,37 +37,22 @@ abstract class CatalogPageViewModel : ViewModel() {
 
 @HiltViewModel
 class CatalogPageViewModelImpl @Inject constructor(
-    private val repository: CatalogRepository
+    private val repository: CatalogRepository,
+    savedStateHandle: SavedStateHandle
 ) : CatalogPageViewModel() {
     init {
-        getCategories()
-    }
-
-    override fun onEvent(event: CatalogPageEvent) {
         viewModelScope.launch {
-            when (event) {
-                is CatalogPageEvent.SelectCategory -> {
-                    state = state.copy(
-                        destination = state.categories.find { it.id == event.id }
-                    )
-                }
-                is CatalogPageEvent.NavBack -> {
-                    state.destination?.let { child ->
-                        state = state.copy(
-                            destination = state.categories.find { it.id == child.parentId }
-                        )
-                    } ?: eventChannel.send(Event.NavBack)
-                }
-            }
-        }
-    }
+            val args = CatalogPageDestination.argsFrom(savedStateHandle)
 
-    private fun getCategories() {
-        viewModelScope.launch {
             repository.getCategories().collect { result ->
                 when (result) {
                     is Resource.Success -> {
-                        state = state.copy(categories = result.data)
+                        state = state.copy(
+                            destination = result.data.find {
+                                it.id == args.destinationId
+                            },
+                            categories = result.data
+                        )
                     }
                     is Resource.Error -> {
                         if (result.isCritical) {
@@ -73,6 +60,29 @@ class CatalogPageViewModelImpl @Inject constructor(
                         }
                     }
                     else -> Unit
+                }
+            }
+        }
+    }
+
+    override fun onEvent(event: CatalogPageEvent) {
+        viewModelScope.launch {
+            when (event) {
+                is CatalogPageEvent.SelectCategory -> {
+                    state = state.copy(
+                        destination = state.categories.find {
+                            it.id == event.id
+                        }
+                    )
+                }
+                is CatalogPageEvent.NavBack -> {
+                    state.destination?.let { destination ->
+                        state = state.copy(
+                            destination = state.categories.find {
+                                it.id == destination.parentId
+                            }
+                        )
+                    } ?: eventChannel.send(Event.NavBack)
                 }
             }
         }

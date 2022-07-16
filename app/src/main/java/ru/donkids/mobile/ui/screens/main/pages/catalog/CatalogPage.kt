@@ -21,10 +21,13 @@ import ru.donkids.mobile.ui.navigation.MainScreenNavGraph
 import ru.donkids.mobile.ui.screens.destinations.LoginScreenDestination
 import ru.donkids.mobile.ui.screens.main.pages.catalog.components.CategoryGrid
 import ru.donkids.mobile.ui.screens.main.pages.catalog.entity.CatalogPageEvent
+import ru.donkids.mobile.ui.screens.main.pages.catalog.entity.CatalogPageNavArgs
 import ru.donkids.mobile.ui.theme.DONKidsTheme
 
 @MainScreenNavGraph
-@Destination
+@Destination(
+    navArgsDelegate = CatalogPageNavArgs::class
+)
 @Composable
 fun CatalogPage(
     navigator: DestinationsNavigator? = null,

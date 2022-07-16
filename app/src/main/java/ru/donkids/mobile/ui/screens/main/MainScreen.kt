@@ -21,7 +21,6 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.manualcomposablecalls.composable
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.navigate
 import ru.donkids.mobile.ui.core.DecorScaffold
 import ru.donkids.mobile.ui.screens.NavGraphs
 import ru.donkids.mobile.ui.screens.destinations.LoginScreenDestination
@@ -80,7 +79,6 @@ fun MainScreen(
                 items.forEach { page ->
                     composable(page.destination) {
                         page.content(
-                            this,
                             navigator,
                             snackbarHostState,
                             navController
@@ -118,7 +116,7 @@ fun MainScreen(
                         },
                         selected = selected,
                         onClick = {
-                            navController.navigate(page.destination) {
+                            navController.navigate(page.destination.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
                                 }

@@ -6,17 +6,17 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.scope.DestinationScope
+import com.ramcosta.composedestinations.spec.DestinationSpec
 import ru.donkids.mobile.R
 import ru.donkids.mobile.ui.screens.destinations.CatalogPageDestination
-import ru.donkids.mobile.ui.screens.destinations.DirectionDestination
 import ru.donkids.mobile.ui.screens.destinations.HomePageDestination
 import ru.donkids.mobile.ui.screens.main.pages.catalog.CatalogPage
+import ru.donkids.mobile.ui.screens.main.pages.catalog.entity.CatalogPageNavArgs
 import ru.donkids.mobile.ui.screens.main.pages.home.HomePage
 
-sealed class MainScreenNavigation(
-    val destination: DirectionDestination,
-    val content: @Composable DestinationScope<Unit>.(
+sealed class MainScreenNavigation<T>(
+    val destination: DestinationSpec<T>,
+    val content: @Composable (
         DestinationsNavigator?,
         SnackbarHostState,
         NavController?
@@ -28,12 +28,13 @@ sealed class MainScreenNavigation(
     @DrawableRes
     val defaultIcon: Int
 ) {
-    object Home : MainScreenNavigation(
+    object Home : MainScreenNavigation<Unit>(
         destination = HomePageDestination,
-        content = { navigator, snackbarState, _ ->
+        content = { navigator, snackbarState, navController ->
             HomePage(
                 navigator = navigator,
                 snackbarHostState = snackbarState,
+                navController
             )
         },
         label = R.string.home,
@@ -41,7 +42,7 @@ sealed class MainScreenNavigation(
         defaultIcon = R.drawable.ic_home_outline
     )
 
-    object Catalog : MainScreenNavigation(
+    object Catalog : MainScreenNavigation<CatalogPageNavArgs>(
         destination = CatalogPageDestination,
         content = { navigator, snackbarState, navController ->
             CatalogPage(
