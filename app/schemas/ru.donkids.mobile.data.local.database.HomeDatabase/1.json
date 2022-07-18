@@ -2,34 +2,34 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "de8f5b2a145a6a648286a565936ce81a",
+    "identityHash": "9bbd3712e950a6b40d195ed890f1ef60",
     "entities": [
       {
         "tableName": "BannerEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pagePath` TEXT NOT NULL, `imagePath` TEXT NOT NULL, `productCode` TEXT, PRIMARY KEY(`imagePath`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`page` TEXT NOT NULL, `image` TEXT NOT NULL, `code` TEXT, PRIMARY KEY(`image`))",
         "fields": [
           {
-            "fieldPath": "pagePath",
-            "columnName": "pagePath",
+            "fieldPath": "page",
+            "columnName": "page",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "imagePath",
-            "columnName": "imagePath",
+            "fieldPath": "image",
+            "columnName": "image",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "productCode",
-            "columnName": "productCode",
+            "fieldPath": "code",
+            "columnName": "code",
             "affinity": "TEXT",
             "notNull": false
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "imagePath"
+            "image"
           ],
           "autoGenerate": false
         },
@@ -102,7 +102,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'de8f5b2a145a6a648286a565936ce81a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9bbd3712e950a6b40d195ed890f1ef60')"
     ]
   }
 }

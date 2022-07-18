@@ -22,9 +22,17 @@ class CatalogRepositoryImpl @Inject constructor(
     private val stringResource: StringResource,
     private val loginAuto: LoginAuto
 ) : CatalogRepository {
-    override suspend fun updateCatalog() = httpRequest {
+    override suspend fun getCatalog(update: Boolean) = httpRequest {
         val dbList = db.getCatalog().sortedBy { product ->
             product.id
+        }
+        if (dbList.isNotEmpty()) {
+            emit(Resource.Success(dbList))
+            emit(Resource.Loading(false))
+
+            if (!update) {
+                return@httpRequest
+            }
         }
 
         loginAuto().collect { result ->
@@ -43,7 +51,7 @@ class CatalogRepositoryImpl @Inject constructor(
                                     product.id
                                 }
                                 if (dbList != catalog) {
-                                    emit(Resource.Success(Unit))
+                                    emit(Resource.Success(catalog))
                                     db.updateCatalog(catalog)
                                 }
                             } ?: emit(serverError())
@@ -61,11 +69,17 @@ class CatalogRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCategories() = httpRequest {
-        val dbList = db.getCategories()
+    override suspend fun getCategories(update: Boolean) = httpRequest {
+        val dbList = db.getCategories().sortedBy { category ->
+            category.id
+        }
         if (dbList.isNotEmpty()) {
             emit(Resource.Success(dbList))
             emit(Resource.Loading(false))
+
+            if (!update) {
+                return@httpRequest
+            }
         }
 
         loginAuto().collect { result ->
@@ -83,6 +97,8 @@ class CatalogRepositoryImpl @Inject constructor(
                             response.products?.let { list ->
                                 val categories = list.map {
                                     it.toProduct()
+                                }.sortedBy { category ->
+                                    category.id
                                 }
                                 if (dbList != categories) {
                                     emit(Resource.Success(categories))
@@ -108,10 +124,10 @@ class CatalogRepositoryImpl @Inject constructor(
         if (dbEntity != null) {
             emit(Resource.Success(dbEntity))
             emit(Resource.Loading(false))
-        }
 
-        if (!update) {
-            return@httpRequest
+            if (!update) {
+                return@httpRequest
+            }
         }
 
         loginAuto().collect { result ->

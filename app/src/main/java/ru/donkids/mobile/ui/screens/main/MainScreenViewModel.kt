@@ -34,7 +34,7 @@ class MainScreenScreenViewModelImpl @Inject constructor(
         println("init")
         viewModelScope.launch {
             getUser()?.let {
-                catalogRepository.updateCatalog().collect { result ->
+                catalogRepository.getCatalog().collect { result ->
                     when (result) {
                         is Resource.Error -> {
                             if (result.isCritical) {
