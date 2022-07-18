@@ -12,7 +12,7 @@ data class ProductEntity(
     val isCategory: Boolean,
     val properties: String,
     val imageHash: String,
-    val imageLink: String,
+    val imagePath: String,
     val keywords: String,
     val abbreviation: String,
     val title: String,

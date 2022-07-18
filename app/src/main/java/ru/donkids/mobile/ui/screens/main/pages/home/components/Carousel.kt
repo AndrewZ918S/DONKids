@@ -29,7 +29,6 @@ import com.google.accompanist.pager.rememberPagerState
 import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.delay
 import ru.donkids.mobile.R
-import ru.donkids.mobile.data.remote.DonKidsApi
 import ru.donkids.mobile.domain.model.Banner
 
 @Composable
@@ -83,7 +82,7 @@ fun Carousel(
                                         onBanner(banner)
                                     }
                                 ),
-                            imageModel = DonKidsApi.SITE_URL + banner.image,
+                            imageModel = banner.getImageLink(),
                             contentScale = ContentScale.FillWidth
                         )
                     }

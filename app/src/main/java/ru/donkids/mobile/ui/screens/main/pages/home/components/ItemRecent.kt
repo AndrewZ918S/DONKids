@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.glide.GlideImage
-import ru.donkids.mobile.data.remote.DonKidsApi
 import ru.donkids.mobile.domain.model.Recent
 import ru.donkids.mobile.ui.core.Price
 
@@ -47,7 +46,7 @@ fun ItemRecent(
                 )
             ) {
                 GlideImage(
-                    imageModel = DonKidsApi.SITE_URL + recent.imageLink,
+                    imageModel = recent.getImageLink(),
                     contentScale = ContentScale.Fit,
                     modifier = Modifier.background(Color.White)
                 )

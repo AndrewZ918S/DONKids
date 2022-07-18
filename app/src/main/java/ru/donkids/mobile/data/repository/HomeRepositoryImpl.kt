@@ -33,25 +33,25 @@ class HomeRepositoryImpl @Inject constructor(
         for (i in 0 until items.size) {
             val item = items[i]
 
-            var image = item.select("img")[0].attr("src")
-            var page = item.select("a")[0].attr("href")
+            var imagePath = item.select("img")[0].attr("src")
+            var pagePath = item.select("a")[0].attr("href")
 
-            image = "/" + image.replace(Regex("${DonKidsApi.SITE_URL}/*"), "")
-            page = "/" + page.replace(Regex("${DonKidsApi.SITE_URL}/*"), "")
+            imagePath = "/" + imagePath.replace(Regex("${DonKidsApi.SITE_URL}/*"), "")
+            pagePath = "/" + pagePath.replace(Regex("${DonKidsApi.SITE_URL}/*"), "")
 
-            var code: String? = null
-            if (page.startsWith("/index")) {
-                val product = Jsoup.connect(DonKidsApi.SITE_URL + page).get()
+            var productCode: String? = null
+            if (pagePath.startsWith("/index")) {
+                val product = Jsoup.connect(DonKidsApi.SITE_URL + pagePath).get()
 
-                code = product.select("div[class=prod-info-block thin]")[0].html()
-                code = code.replace(Regex("<h2.+h2>"), "")
+                productCode = product.select("div[class=prod-info-block thin]")[0].html()
+                productCode = productCode.replace(Regex("<h2.+h2>"), "")
             }
 
             banners.add(
                 Banner(
-                    page = page,
-                    image = image,
-                    code = code
+                    pagePath = pagePath,
+                    imagePath = imagePath,
+                    productCode = productCode
                 )
             )
         }

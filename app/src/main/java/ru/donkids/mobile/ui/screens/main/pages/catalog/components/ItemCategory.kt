@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.glide.GlideImage
-import ru.donkids.mobile.data.remote.DonKidsApi
 import ru.donkids.mobile.domain.model.Product
 
 @Composable
@@ -41,7 +40,7 @@ fun ItemCategory(
                 .size(48.dp)
         ) {
             GlideImage(
-                imageModel = DonKidsApi.SITE_URL + category.imageLink,
+                imageModel = category.getThumbLink(),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.background(Color.White)
             )

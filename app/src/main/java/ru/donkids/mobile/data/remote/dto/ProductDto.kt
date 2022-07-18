@@ -13,7 +13,7 @@ data class ProductDto(
     @Json(name = "desc") val properties: String,
     @Json(name = "grp") @StringValue val isCategory: Boolean,
     @Json(name = "image_hash") @ImageHash val imageHash: String,
-    @Json(name = "image_link") @ImageLink val imageLink: String,
+    @Json(name = "image_link") @ImageLink val imagePath: String,
     @Json(name = "keywords") val keywords: String,
     @Json(name = "nazv") val abbreviation: String,
     @Json(name = "nazvpoln") val title: String,

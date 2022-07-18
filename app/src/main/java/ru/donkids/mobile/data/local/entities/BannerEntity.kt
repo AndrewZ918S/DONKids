@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class BannerEntity(
-    val page: String,
-    @PrimaryKey val image: String,
-    val code: String? = null
+    val pagePath: String,
+    @PrimaryKey val imagePath: String,
+    val productCode: String? = null
 )

@@ -2,34 +2,34 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "53c0d4ed6c1970972c595a87859b514a",
+    "identityHash": "de8f5b2a145a6a648286a565936ce81a",
     "entities": [
       {
         "tableName": "BannerEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`page` TEXT NOT NULL, `image` TEXT NOT NULL, `code` TEXT, PRIMARY KEY(`image`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pagePath` TEXT NOT NULL, `imagePath` TEXT NOT NULL, `productCode` TEXT, PRIMARY KEY(`imagePath`))",
         "fields": [
           {
-            "fieldPath": "page",
-            "columnName": "page",
+            "fieldPath": "pagePath",
+            "columnName": "pagePath",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "image",
-            "columnName": "image",
+            "fieldPath": "imagePath",
+            "columnName": "imagePath",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "code",
-            "columnName": "code",
+            "fieldPath": "productCode",
+            "columnName": "productCode",
             "affinity": "TEXT",
             "notNull": false
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "image"
+            "imagePath"
           ],
           "autoGenerate": false
         },
@@ -38,7 +38,7 @@
       },
       {
         "tableName": "RecentEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `code` TEXT NOT NULL, `vendorCode` TEXT NOT NULL, `price` REAL, `imageLink` TEXT NOT NULL, `abbreviation` TEXT NOT NULL, `isAvailable` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `code` TEXT NOT NULL, `vendorCode` TEXT NOT NULL, `price` REAL, `imagePath` TEXT NOT NULL, `abbreviation` TEXT NOT NULL, `isAvailable` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -65,8 +65,8 @@
             "notNull": false
           },
           {
-            "fieldPath": "imageLink",
-            "columnName": "imageLink",
+            "fieldPath": "imagePath",
+            "columnName": "imagePath",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -102,7 +102,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '53c0d4ed6c1970972c595a87859b514a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'de8f5b2a145a6a648286a565936ce81a')"
     ]
   }
 }

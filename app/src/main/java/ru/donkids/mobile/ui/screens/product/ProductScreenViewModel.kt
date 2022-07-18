@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import ru.donkids.mobile.R
 import ru.donkids.mobile.data.mapper.toRecent
-import ru.donkids.mobile.data.remote.DonKidsApi
 import ru.donkids.mobile.domain.repository.CatalogRepository
 import ru.donkids.mobile.domain.repository.HomeRepository
 import ru.donkids.mobile.domain.use_case.localize.ProductSpecs
@@ -63,7 +62,7 @@ class ProductScreenViewModelImpl @Inject constructor(
                         val data = product.data
 
                         state = state.copy(
-                            imageLink = DonKidsApi.SITE_URL + data.imageLink,
+                            imageLink = data.getImageLink(),
                             title = data.title,
                             productCode = data.code,
                             vendorCode = data.vendorCode,

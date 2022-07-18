@@ -64,7 +64,7 @@ class HomePageViewModelImpl @Inject constructor(
         viewModelScope.launch {
             when (event) {
                 is HomePageEvent.OpenBanner -> {
-                    event.banner.code?.let { productCode ->
+                    event.banner.productCode?.let { productCode ->
                         catalogRepository.getProductByCode(productCode, false).collect { result ->
                             when (result) {
                                 is Resource.Success -> {
@@ -77,9 +77,10 @@ class HomePageViewModelImpl @Inject constructor(
                             }
                         }
                     } ?: run {
-                        val page = event.banner.page
-                        if (page.trim() != "/") {
-                            eventChannel.send(Event.OpenUrl(DonKidsApi.SITE_URL + page))
+                        val url = event.banner.getPageLink()
+
+                        if (url != DonKidsApi.SITE_URL) {
+                            eventChannel.send(Event.OpenUrl(url))
                         }
                     }
                 }
