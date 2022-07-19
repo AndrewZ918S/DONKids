@@ -47,7 +47,16 @@ fun InputTextField(
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit =
         @Composable { innerTextField -> innerTextField() }
 ) {
-    var textFieldValueState by remember { mutableStateOf(TextFieldValue(text = value)) }
+    var textFieldValueState by remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = value,
+                selection = TextRange(
+                    index = value.length
+                )
+            )
+        )
+    }
     val textFieldValue = textFieldValueState.copy(text = value)
     var lastTextValue by remember(value) { mutableStateOf(value) }
 
@@ -109,7 +118,6 @@ fun InputTextField(
         colors.textColor(enabled).value
     }
 
-    var movePointer by remember { mutableStateOf(requestFocus) }
     var hadFocus by remember { mutableStateOf(false) }
     val isImeVisible = WindowInsets.isImeVisible
 
@@ -132,16 +140,7 @@ fun InputTextField(
         }
 
         BasicTextField(
-            value = if (movePointer) {
-                movePointer = false
-                value.copy(
-                    selection = TextRange(
-                        index = value.text.length
-                    )
-                )
-            } else {
-                value
-            },
+            value = value,
             onValueChange = onValueChange,
             modifier = modifier
                 .focusRequester(focusRequester)
