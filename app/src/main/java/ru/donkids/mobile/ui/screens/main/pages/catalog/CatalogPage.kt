@@ -10,6 +10,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
@@ -17,6 +18,7 @@ import ru.donkids.mobile.R
 import ru.donkids.mobile.ui.core.DecorScaffold
 import ru.donkids.mobile.ui.navigation.MainScreenNavGraph
 import ru.donkids.mobile.ui.screens.destinations.LoginScreenDestination
+import ru.donkids.mobile.ui.screens.destinations.SearchScreenDestination
 import ru.donkids.mobile.ui.screens.main.entity.MainScreenNavigation
 import ru.donkids.mobile.ui.screens.main.pages.catalog.components.CategoryGrid
 import ru.donkids.mobile.ui.screens.main.pages.catalog.entity.CatalogPageEvent
@@ -92,11 +94,20 @@ fun CatalogPage(
                 title = {
                     Text(
                         text = state.destination?.abbreviation
-                            ?: stringResource(R.string.categories)
+                            ?: stringResource(R.string.categories),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
                     )
                 },
                 actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(
+                        onClick = {
+                            parcel?.navigator?.navigate(SearchScreenDestination) {
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_search),
                             contentDescription = stringResource(R.string.search),
@@ -112,19 +123,18 @@ fun CatalogPage(
                     }
                 }
             )
-        },
-        content = { innerPadding ->
-            CategoryGrid(
-                categories = state.categories.filter {
-                    it.parentId == (state.destination?.id ?: 0)
-                },
-                onCategory = {
-                    viewModel.onEvent(CatalogPageEvent.SelectCategory(it.id))
-                },
-                modifier = Modifier.padding(innerPadding)
-            )
         }
-    )
+    ) { innerPadding ->
+        CategoryGrid(
+            categories = state.categories.filter {
+                it.parentId == (state.destination?.id ?: 0)
+            },
+            onCategory = {
+                viewModel.onEvent(CatalogPageEvent.SelectCategory(it.id))
+            },
+            modifier = Modifier.padding(innerPadding)
+        )
+    }
 }
 
 @Preview

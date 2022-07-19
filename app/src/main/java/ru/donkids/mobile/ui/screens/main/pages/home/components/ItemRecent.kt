@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.glide.GlideImage
 import ru.donkids.mobile.domain.model.Recent
@@ -59,6 +60,7 @@ fun ItemRecent(
                 } else {
                     MaterialTheme.colorScheme.onSurfaceVariant
                 },
+                overflow = TextOverflow.Ellipsis,
                 maxLines = 2
             )
             Price(

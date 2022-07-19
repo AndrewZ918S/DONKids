@@ -31,18 +31,21 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.popUpTo
 import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.launch
 import ru.donkids.mobile.R
 import ru.donkids.mobile.ui.core.DecorScaffold
 import ru.donkids.mobile.ui.core.InputTextField
 import ru.donkids.mobile.ui.core.Price
+import ru.donkids.mobile.ui.screens.destinations.MainScreenDestination
 import ru.donkids.mobile.ui.screens.destinations.SearchScreenDestination
 import ru.donkids.mobile.ui.screens.product.entity.ProductScreenEvent
 import ru.donkids.mobile.ui.screens.product.entity.ProductScreenNavArgs
@@ -96,7 +99,12 @@ fun ProductScreen(
                 scrollBehavior = topBarBehavior,
                 colors = topBarColors,
                 title = {
-                    Text(state.category)
+                    Text(
+                        state.category,
+                        style = typography.titleLarge,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
                 },
                 navigationIcon = {
                     IconButton(
@@ -113,7 +121,13 @@ fun ProductScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            navigator?.navigate(SearchScreenDestination)
+                            navigator?.navigate(SearchScreenDestination) {
+                                popUpTo(MainScreenDestination) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         }
                     ) {
                         Icon(
@@ -180,6 +194,7 @@ fun ProductScreen(
                         Text(
                             text = state.title,
                             style = typography.titleLarge,
+                            overflow = TextOverflow.Ellipsis,
                             maxLines = 2
                         )
                         Spacer(Modifier.height(8.dp))
