@@ -71,7 +71,7 @@ class ProductScreenViewModelImpl @Inject constructor(
                             price = data.price
                         )
 
-                        catalogRepository.getProductById(data.parentId).collect { parent ->
+                        catalogRepository.getProductById(data.parentId, true).collect { parent ->
                             when (parent) {
                                 is Resource.Success -> {
                                     state = state.copy(
