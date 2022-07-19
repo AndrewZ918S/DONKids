@@ -104,7 +104,9 @@ fun HomePage(
                     }
                 }
             ) {
-                parcel?.navigator?.navigate(SearchScreenDestination)
+                parcel?.navigator?.navigate(SearchScreenDestination) {
+                    launchSingleTop = true
+                }
             }
             Carousel(
                 banners = state.banners,

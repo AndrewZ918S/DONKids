@@ -42,7 +42,7 @@
     <string name="view_in_cart">View in cart</string>
     <string name="add_to_favorites">Add to favorites</string>
     <string name="view_in_favorites">View in favorites</string>
-    <string name="from_category">Products from this category</string>
+    <string name="from_category">Search \"%s\" in category</string>
     <string name="remove_from_cart">Remove from cart</string>
     <string name="specifications">Specifications</string>
     <string name="product_code">Code</string>
