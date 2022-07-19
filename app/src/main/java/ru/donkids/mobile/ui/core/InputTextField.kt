@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
@@ -108,6 +109,7 @@ fun InputTextField(
         colors.textColor(enabled).value
     }
 
+    var movePointer by remember { mutableStateOf(requestFocus) }
     var hadFocus by remember { mutableStateOf(false) }
     val isImeVisible = WindowInsets.isImeVisible
 
@@ -130,7 +132,16 @@ fun InputTextField(
         }
 
         BasicTextField(
-            value = value,
+            value = if (movePointer) {
+                movePointer = false
+                value.copy(
+                    selection = TextRange(
+                        index = value.text.length
+                    )
+                )
+            } else {
+                value
+            },
             onValueChange = onValueChange,
             modifier = modifier
                 .focusRequester(focusRequester)
