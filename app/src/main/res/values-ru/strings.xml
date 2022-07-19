@@ -55,4 +55,7 @@
     <string name="added_to_cart">Товар добавлен в корзину</string>
     <string name="added_to_favorites">Товар добавлен в избранное</string>
     <string name="categories">Категории</string>
+    <string name="manufacturer">Производитель</string>
+    <string name="packing">Упаковка</string>
+    <string name="packing_size">Размер упаковки</string>
 </resources>

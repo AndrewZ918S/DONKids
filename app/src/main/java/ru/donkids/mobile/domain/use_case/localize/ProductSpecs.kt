@@ -23,30 +23,17 @@ class ProductSpecs @Inject constructor(
 
             if (value != "0" && value != "см") {
                 val localKey = when (key) {
-                    "размер" -> stringResource(R.string.size)
-                    "материал" -> stringResource(R.string.material)
-                    "комплектация" -> stringResource(R.string.includes)
                     "возраст" -> stringResource(R.string.age)
-                    else -> key
+                    "комплектация" -> stringResource(R.string.includes)
+                    "материал" -> stringResource(R.string.material)
+                    "размер" -> stringResource(R.string.size)
+                    "упаковка" -> stringResource(R.string.packing)
+                    "размер упаковки" -> stringResource(R.string.packing_size)
+                    "производитель" -> stringResource(R.string.manufacturer)
+                    else -> return@forEach
                 }
 
-                val localValue = when {
-                    value.contains("см") -> {
-                        value.replace(
-                            regex = Regex("\\s*см"),
-                            replacement = " ${stringResource(R.string.unit_cm)}"
-                        )
-                    }
-                    value.startsWith("от") -> {
-                        stringResource(
-                            R.string.for_age,
-                            value.replace(Regex("[^\\d]+"), "")
-                        )
-                    }
-                    else -> value
-                }
-
-                map[localKey] = localValue
+                map[localKey] = value
             }
         }
 
