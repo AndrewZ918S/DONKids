@@ -1,5 +1,8 @@
 package ru.donkids.mobile.ui.screens.main
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -85,12 +88,13 @@ fun MainScreen(
         }
     }
 
-    DecorScaffold(
-        content = { innerPadding ->
-            Box(Modifier.padding(innerPadding)) {
+    Box {
+        DecorScaffold(
+            content = { innerPadding ->
                 DestinationsNavHost(
                     navGraph = NavGraphs.mainScreen,
-                    navController = navController
+                    navController = navController,
+                    modifier = Modifier.padding(innerPadding)
                 ) {
                     items.forEach { page ->
                         composable(page.destination) {
@@ -104,85 +108,85 @@ fun MainScreen(
                         }
                     }
                 }
-                if (state.isLoading) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                color = Color.Black.copy(
-                                    alpha = if (state.isLoading) {
-                                        0.8f
-                                    } else {
-                                        0f
-                                    }
+            },
+            snackbarHost = {
+                SnackbarHost(snackbarHostState)
+            },
+            navigationBarColor = colorScheme.surface[2],
+            bottomBar = {
+                NavigationBar {
+                    items.forEach { page ->
+                        val selected = currentDestination?.route == page.destination.route
+
+                        NavigationBarItem(
+                            icon = {
+                                Icon(
+                                    painter = painterResource(
+                                        if (selected) {
+                                            page.selectedIcon
+                                        } else {
+                                            page.defaultIcon
+                                        }
+                                    ),
+                                    contentDescription = null
                                 )
-                            )
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) {
-                                // prevent content touches
+                            },
+                            label = {
+                                Text(
+                                    text = stringResource(page.label)
+                                )
+                            },
+                            selected = selected,
+                            onClick = {
+                                navController.navigate(page.destination.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
                             }
-                    ) {
-                        CircularProgressIndicator()
-                        Text(
-                            text = stringResource(R.string.updating),
-                            textAlign = TextAlign.Center,
-                            style = typography.bodyLarge,
-                            modifier = Modifier.padding(32.dp)
                         )
                     }
                 }
             }
-        },
-        snackbarHost = {
-            SnackbarHost(snackbarHostState)
-        },
-        navigationBarColor = colorScheme.surface[2],
-        bottomBar = {
-            NavigationBar {
-                items.forEach { page ->
-                    val selected = currentDestination?.route == page.destination.route
+        )
 
-                    NavigationBarItem(
-                        icon = {
-                            Icon(
-                                painter = painterResource(
-                                    if (selected) {
-                                        page.selectedIcon
-                                    } else {
-                                        page.defaultIcon
-                                    }
-                                ),
-                                contentDescription = null
-                            )
-                        },
-                        label = {
-                            Text(
-                                text = stringResource(page.label)
-                            )
-                        },
-                        selected = selected,
-                        onClick = {
-                            if (state.isLoading) {
-                                return@NavigationBarItem
-                            }
-
-                            navController.navigate(page.destination.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
+        AnimatedVisibility(
+            visible = state.isLoading,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        color = Color.Black.copy(
+                            alpha = 0.8f
+                        )
                     )
-                }
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        // block touch events
+                    }
+            ) {
+                CircularProgressIndicator()
+                Text(
+                    text = stringResource(R.string.updating),
+                    color = Color.White.copy(
+                        alpha = 0.8f
+                    ),
+                    textAlign = TextAlign.Center,
+                    style = typography.bodyLarge,
+                    modifier = Modifier.padding(32.dp)
+                )
             }
         }
-    )
+    }
 }
 
 @Preview

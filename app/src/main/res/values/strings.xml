@@ -59,4 +59,5 @@
     <string name="manufacturer">Manufacturer</string>
     <string name="packing">Packing</string>
     <string name="packing_size">Packing size</string>
+    <string name="updating">Updating catalog...</string>
 </resources>

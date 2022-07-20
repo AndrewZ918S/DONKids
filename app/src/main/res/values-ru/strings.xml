@@ -58,4 +58,5 @@
     <string name="manufacturer">Производитель</string>
     <string name="packing">Упаковка</string>
     <string name="packing_size">Размер упаковки</string>
+    <string name="updating">Обновление товаров...</string>
 </resources>

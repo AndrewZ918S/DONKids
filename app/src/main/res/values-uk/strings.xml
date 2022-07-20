@@ -58,4 +58,5 @@
     <string name="manufacturer">Виробник</string>
     <string name="packing">Упаковка</string>
     <string name="packing_size">Розмір упаковки</string>
+    <string name="updating">Оновлення товарів...</string>
 </resources>
