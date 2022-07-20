@@ -79,7 +79,7 @@ class HomePageViewModelImpl @Inject constructor(
                     } ?: run {
                         val url = event.banner.getPageLink()
 
-                        if (url != DonKidsApi.SITE_URL) {
+                        if (url.removeSuffix("/") != DonKidsApi.SITE_URL) {
                             eventChannel.send(Event.OpenUrl(url))
                         }
                     }
