@@ -1,5 +1,7 @@
 package ru.donkids.mobile.ui.screens.login
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -56,8 +58,7 @@ fun LoginScreen(
         viewModel.events.collect { event ->
             when (event) {
                 is LoginScreenViewModel.Event.Proceed -> {
-                    navigator?.navigate(MainScreenDestination) {
-                        navigator.popBackStack()
+                    navigator?.navigate(MainScreenDestination()) {
                         launchSingleTop = true
                     }
                 }
@@ -65,6 +66,13 @@ fun LoginScreen(
                     openCustomTab(context, event.url)
                 }
             }
+        }
+    }
+
+    if (!LocalView.current.isInEditMode) {
+        val activity = LocalContext.current as Activity
+        BackHandler {
+            activity.finish()
         }
     }
 

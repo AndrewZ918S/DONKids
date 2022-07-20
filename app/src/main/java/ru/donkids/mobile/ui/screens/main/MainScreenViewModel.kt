@@ -3,6 +3,7 @@ package ru.donkids.mobile.ui.screens.main
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import ru.donkids.mobile.domain.repository.CatalogRepository
 import ru.donkids.mobile.domain.use_case.user.GetUser
+import ru.donkids.mobile.ui.screens.destinations.MainScreenDestination
 import ru.donkids.mobile.ui.screens.main.entity.MainScreenState
 import ru.donkids.mobile.util.Resource
 import javax.inject.Inject
@@ -27,6 +29,11 @@ abstract class MainScreenViewModel : ViewModel() {
             val message: String? = null
         ) : Event()
 
+        data class OpenCatalog(
+            val id: Int,
+            val query: String?
+        ) : Event()
+
         data class ShowMessage(
             val message: String? = null
         ) : Event()
@@ -36,10 +43,22 @@ abstract class MainScreenViewModel : ViewModel() {
 @HiltViewModel
 class MainScreenScreenViewModelImpl @Inject constructor(
     private val catalogRepository: CatalogRepository,
-    private val getUser: GetUser
+    private val getUser: GetUser,
+    savedStateHandle: SavedStateHandle
 ) : MainScreenViewModel() {
     init {
         viewModelScope.launch {
+            val args = MainScreenDestination.argsFrom(savedStateHandle)
+
+            args.destinationId?.let { destinationId ->
+                eventChannel.send(
+                    Event.OpenCatalog(
+                        id = destinationId,
+                        query = args.query
+                    )
+                )
+            }
+
             getUser()?.let {
                 catalogRepository.getCatalog(true).collect { result ->
                     when (result) {

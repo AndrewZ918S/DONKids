@@ -19,15 +19,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.navigate
+import com.ramcosta.composedestinations.navigation.popUpTo
 import kotlinx.coroutines.launch
 import ru.donkids.mobile.R
 import ru.donkids.mobile.ui.core.DecorSurface
 import ru.donkids.mobile.ui.core.openCustomTab
 import ru.donkids.mobile.ui.navigation.MainScreenNavGraph
 import ru.donkids.mobile.ui.screens.destinations.CatalogPageDestination
+import ru.donkids.mobile.ui.screens.destinations.HomePageDestination
 import ru.donkids.mobile.ui.screens.destinations.ProductScreenDestination
 import ru.donkids.mobile.ui.screens.destinations.SearchScreenDestination
 import ru.donkids.mobile.ui.screens.main.entity.MainScreenNavigation
@@ -120,7 +121,7 @@ fun HomePage(
                             destinationId = 1024764 // New toys
                         )
                     ) {
-                        popUpTo(navController.graph.findStartDestination().id) {
+                        popUpTo(HomePageDestination) {
                             saveState = true
                         }
                         launchSingleTop = true

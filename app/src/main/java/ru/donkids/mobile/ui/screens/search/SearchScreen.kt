@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalView
@@ -49,6 +50,23 @@ fun SearchScreen(
         state = rememberTopAppBarScrollState()
     )
 
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is SearchScreenViewModel.Event.OpenCatalog -> {
+                    navigator?.navigate(
+                        direction = MainScreenDestination(
+                            destinationId = event.id,
+                            query = event.query
+                        )
+                    ) {
+                        launchSingleTop = true
+                    }
+                }
+            }
+        }
+    }
+
     DecorScaffold(
         modifier = Modifier.nestedScroll(topBarBehavior.nestedScrollConnection),
         statusBarColor = topBarColors
@@ -57,6 +75,7 @@ fun SearchScreen(
         navigationBarColor = colorScheme.surface,
         topBar = {
             SmallTopAppBar(
+                scrollBehavior = topBarBehavior,
                 navigationIcon = {
                     IconButton(
                         onClick = {
@@ -88,7 +107,13 @@ fun SearchScreen(
                             imeAction = ImeAction.Search
                         ),
                         keyboardActions = KeyboardActions(
-                            onSearch = { /* TODO */ }
+                            onSearch = {
+                                viewModel.onEvent(
+                                    SearchScreenEvent.OpenCatalog(
+                                        query = state.query
+                                    )
+                                )
+                            }
                         ),
                         textStyle = MaterialTheme.typography.bodyLarge,
                         singleLine = true,
@@ -117,10 +142,12 @@ fun SearchScreen(
         ) {
             items(state.products.size) { index ->
                 ItemProduct(state.products[index]) {
-                    navigator?.navigate(ProductScreenDestination(id = it.id)) {
-                        popUpTo(MainScreenDestination) {
-                            saveState = true
-                        }
+                    navigator?.navigate(
+                        direction = ProductScreenDestination(
+                            id = it.id
+                        )
+                    ) {
+                        popUpTo(MainScreenDestination)
                         launchSingleTop = true
                     }
                 }
@@ -133,7 +160,11 @@ fun SearchScreen(
                 }
                 items(state.categories.size) { index ->
                     ItemCategory(state.categories[index]) {
-                        /* TODO */
+                        viewModel.onEvent(
+                            SearchScreenEvent.OpenCatalog(
+                                id = it.id
+                            )
+                        )
                     }
                 }
             }
@@ -145,7 +176,12 @@ fun SearchScreen(
                 }
                 items(state.parents.size) { index ->
                     ItemCategory(state.parents[index]) {
-                        /* TODO */
+                        viewModel.onEvent(
+                            SearchScreenEvent.OpenCatalog(
+                                id = it.id,
+                                query = state.query
+                            )
+                        )
                     }
                 }
             }

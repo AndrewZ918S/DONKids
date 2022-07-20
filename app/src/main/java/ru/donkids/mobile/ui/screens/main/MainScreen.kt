@@ -1,5 +1,7 @@
 package ru.donkids.mobile.ui.screens.main
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -14,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -21,7 +24,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -29,11 +31,16 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.manualcomposablecalls.composable
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.navigate
+import com.ramcosta.composedestinations.navigation.popUpTo
 import kotlinx.coroutines.launch
 import ru.donkids.mobile.R
 import ru.donkids.mobile.ui.core.DecorScaffold
 import ru.donkids.mobile.ui.screens.NavGraphs
+import ru.donkids.mobile.ui.screens.destinations.CatalogPageDestination
+import ru.donkids.mobile.ui.screens.destinations.HomePageDestination
 import ru.donkids.mobile.ui.screens.destinations.LoginScreenDestination
+import ru.donkids.mobile.ui.screens.main.entity.MainScreenNavArgs
 import ru.donkids.mobile.ui.screens.main.entity.MainScreenNavigation
 import ru.donkids.mobile.ui.theme.DONKidsTheme
 import ru.donkids.mobile.ui.theme.get
@@ -41,7 +48,9 @@ import ru.donkids.mobile.ui.theme.get
 @RootNavGraph(
     start = true
 )
-@Destination
+@Destination(
+    navArgsDelegate = MainScreenNavArgs::class
+)
 @Composable
 fun MainScreen(
     navigator: DestinationsNavigator? = null
@@ -73,7 +82,19 @@ fun MainScreen(
             when (event) {
                 is MainScreenViewModel.Event.RequestLogin -> {
                     navigator?.navigate(LoginScreenDestination(event.message)) {
-                        navigator.popBackStack()
+                        launchSingleTop = true
+                    }
+                }
+                is MainScreenViewModel.Event.OpenCatalog -> {
+                    navController.navigate(
+                        direction = CatalogPageDestination(
+                            destinationId = event.id,
+                            query = event.query
+                        )
+                    ) {
+                        popUpTo(HomePageDestination) {
+                            saveState = true
+                        }
                         launchSingleTop = true
                     }
                 }
@@ -85,6 +106,13 @@ fun MainScreen(
                     }
                 }
             }
+        }
+    }
+
+    if (!LocalView.current.isInEditMode) {
+        val activity = LocalContext.current as Activity
+        BackHandler {
+            activity.finish()
         }
     }
 
@@ -139,7 +167,7 @@ fun MainScreen(
                             selected = selected,
                             onClick = {
                                 navController.navigate(page.destination.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
+                                    popUpTo(HomePageDestination) {
                                         saveState = true
                                     }
                                     launchSingleTop = true

@@ -47,7 +47,6 @@ fun CatalogPage(
                         navigator.navigate(
                             LoginScreenDestination(event.message)
                         ) {
-                            navigator.popBackStack()
                             launchSingleTop = true
                         }
                     }
@@ -104,7 +103,6 @@ fun CatalogPage(
                         onClick = {
                             parcel?.navigator?.navigate(SearchScreenDestination) {
                                 launchSingleTop = true
-                                restoreState = true
                             }
                         }
                     ) {

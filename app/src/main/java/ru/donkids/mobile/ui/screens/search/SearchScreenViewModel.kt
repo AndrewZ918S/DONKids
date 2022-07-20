@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import ru.donkids.mobile.domain.model.Product
 import ru.donkids.mobile.domain.repository.CatalogRepository
 import ru.donkids.mobile.ui.screens.search.entity.SearchScreenEvent
@@ -16,10 +18,20 @@ import ru.donkids.mobile.util.jaroWinkler
 import javax.inject.Inject
 
 abstract class SearchScreenViewModel : ViewModel() {
+    protected val eventChannel = Channel<Event>()
+    val events = eventChannel.receiveAsFlow()
+
     var state by mutableStateOf(SearchScreenState())
         protected set
 
     open fun onEvent(event: SearchScreenEvent) = Unit
+
+    sealed class Event {
+        data class OpenCatalog(
+            val id: Int,
+            val query: String?
+        ) : Event()
+    }
 }
 
 @HiltViewModel
@@ -45,6 +57,14 @@ class SearchScreenViewModelImpl @Inject constructor(
     override fun onEvent(event: SearchScreenEvent) {
         viewModelScope.launch {
             when (event) {
+                is SearchScreenEvent.OpenCatalog -> {
+                    eventChannel.send(
+                        Event.OpenCatalog(
+                            id = event.id,
+                            query = event.query
+                        )
+                    )
+                }
                 is SearchScreenEvent.QueryChanged -> {
                     state = state.copy(query = event.query)
 

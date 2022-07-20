@@ -38,14 +38,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.popUpTo
 import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.launch
 import ru.donkids.mobile.R
 import ru.donkids.mobile.ui.core.DecorScaffold
 import ru.donkids.mobile.ui.core.InputTextField
 import ru.donkids.mobile.ui.core.Price
-import ru.donkids.mobile.ui.screens.destinations.MainScreenDestination
 import ru.donkids.mobile.ui.screens.destinations.SearchScreenDestination
 import ru.donkids.mobile.ui.screens.product.entity.ProductScreenEvent
 import ru.donkids.mobile.ui.screens.product.entity.ProductScreenNavArgs
@@ -122,11 +120,7 @@ fun ProductScreen(
                     IconButton(
                         onClick = {
                             navigator?.navigate(SearchScreenDestination) {
-                                popUpTo(MainScreenDestination) {
-                                    saveState = true
-                                }
                                 launchSingleTop = true
-                                restoreState = true
                             }
                         }
                     ) {
