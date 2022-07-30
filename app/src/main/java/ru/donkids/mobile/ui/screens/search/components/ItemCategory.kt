@@ -49,7 +49,7 @@ fun ItemCategory(
             )
         }
         Text(
-            text = category.abbreviation,
+            text = category.title,
             style = typography.bodyMedium,
             modifier = Modifier
                 .padding(8.dp)

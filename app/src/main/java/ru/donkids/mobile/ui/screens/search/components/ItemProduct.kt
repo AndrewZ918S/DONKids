@@ -49,7 +49,7 @@ fun ItemProduct(
             )
         }
         Text(
-            text = product.abbreviation,
+            text = product.title,
             style = typography.bodyMedium,
             modifier = Modifier
                 .padding(8.dp)

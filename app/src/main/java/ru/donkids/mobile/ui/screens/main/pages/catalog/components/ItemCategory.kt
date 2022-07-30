@@ -46,7 +46,7 @@ fun ItemCategory(
             )
         }
         Text(
-            text = category.abbreviation,
+            text = category.title,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(end = 8.dp),
             maxLines = 2

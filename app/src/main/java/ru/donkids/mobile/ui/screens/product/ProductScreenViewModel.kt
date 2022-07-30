@@ -75,7 +75,7 @@ class ProductScreenViewModelImpl @Inject constructor(
                             when (parent) {
                                 is Resource.Success -> {
                                     state = state.copy(
-                                        category = parent.data.abbreviation
+                                        category = parent.data.title
                                     )
                                 }
                                 else -> Unit
