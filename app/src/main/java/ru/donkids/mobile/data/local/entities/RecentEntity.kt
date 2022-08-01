@@ -10,7 +10,7 @@ data class RecentEntity(
     val vendorCode: String,
     val price: Float?,
     val imagePath: String,
-    val abbreviation: String,
+    val title: String,
     val isAvailable: Boolean,
     val timestamp: Long
 )

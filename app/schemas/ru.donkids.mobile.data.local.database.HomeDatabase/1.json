@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "de8f5b2a145a6a648286a565936ce81a",
+    "identityHash": "48e38136e63a9174fda539b939d82ccf",
     "entities": [
       {
         "tableName": "BannerEntity",
@@ -38,7 +38,7 @@
       },
       {
         "tableName": "RecentEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `code` TEXT NOT NULL, `vendorCode` TEXT NOT NULL, `price` REAL, `imagePath` TEXT NOT NULL, `abbreviation` TEXT NOT NULL, `isAvailable` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `code` TEXT NOT NULL, `vendorCode` TEXT NOT NULL, `price` REAL, `imagePath` TEXT NOT NULL, `title` TEXT NOT NULL, `isAvailable` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -71,8 +71,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "abbreviation",
-            "columnName": "abbreviation",
+            "fieldPath": "title",
+            "columnName": "title",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -102,7 +102,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'de8f5b2a145a6a648286a565936ce81a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '48e38136e63a9174fda539b939d82ccf')"
     ]
   }
 }

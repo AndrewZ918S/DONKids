@@ -11,7 +11,7 @@ fun RecentEntity.toRecent(): Recent {
         vendorCode = vendorCode,
         price = price,
         imagePath = imagePath,
-        abbreviation = abbreviation,
+        title = title,
         isAvailable = isAvailable,
         timestamp = timestamp
     )
@@ -24,7 +24,7 @@ fun Recent.toRecentEntity(): RecentEntity {
         vendorCode = vendorCode,
         price = price,
         imagePath = imagePath,
-        abbreviation = abbreviation,
+        title = title,
         isAvailable = isAvailable,
         timestamp = timestamp
     )
@@ -37,7 +37,7 @@ fun Product.toRecent(): Recent {
         vendorCode = vendorCode,
         price = price,
         imagePath = imagePath,
-        abbreviation = abbreviation,
+        title = title,
         isAvailable = isAvailable,
         timestamp = System.currentTimeMillis()
     )
