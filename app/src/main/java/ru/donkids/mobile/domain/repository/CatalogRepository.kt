@@ -9,7 +9,11 @@ interface CatalogRepository {
 
     suspend fun getCategories(update: Boolean = false): Flow<Resource<List<Product>>>
 
+    suspend fun getChildProducts(parentId: Int, update: Boolean = false): Flow<Resource<List<Product>>>
+
     suspend fun getProductById(id: Int, update: Boolean = false): Flow<Resource<Product>>
 
     suspend fun getProductByCode(code: String, update: Boolean = false): Flow<Resource<Product>>
+
+    suspend fun getProductWithBarcode(barcode: String, update: Boolean = false): Flow<Resource<Product>>
 }

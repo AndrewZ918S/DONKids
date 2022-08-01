@@ -12,6 +12,7 @@ import ru.donkids.mobile.domain.use_case.localize.ServerError
 import ru.donkids.mobile.domain.use_case.localize.StringResource
 import ru.donkids.mobile.domain.use_case.login.LoginAuto
 import ru.donkids.mobile.util.Resource
+import ru.donkids.mobile.util.radixSortedBy
 import javax.inject.Inject
 
 class CatalogRepositoryImpl @Inject constructor(
@@ -23,7 +24,7 @@ class CatalogRepositoryImpl @Inject constructor(
     private val loginAuto: LoginAuto
 ) : CatalogRepository {
     override suspend fun getCatalog(update: Boolean) = httpRequest {
-        val dbList = db.getCatalog().sortedBy { product ->
+        val dbList = db.getCatalog().radixSortedBy { product ->
             product.id
         }
         if (dbList.isNotEmpty()) {
@@ -47,7 +48,7 @@ class CatalogRepositoryImpl @Inject constructor(
                             response.products?.let { list ->
                                 val catalog = list.map { productDto ->
                                     productDto.toProduct()
-                                }.sortedBy { product ->
+                                }.radixSortedBy { product ->
                                     product.id
                                 }
                                 if (dbList != catalog) {
@@ -70,7 +71,7 @@ class CatalogRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCategories(update: Boolean) = httpRequest {
-        val dbList = db.getCategories().sortedBy { category ->
+        val dbList = db.getCategories().radixSortedBy { category ->
             category.id
         }
         if (dbList.isNotEmpty()) {
@@ -97,12 +98,64 @@ class CatalogRepositoryImpl @Inject constructor(
                             response.products?.let { list ->
                                 val categories = list.map {
                                     it.toProduct()
-                                }.sortedBy { category ->
+                                }.radixSortedBy { category ->
                                     category.id
                                 }
                                 if (dbList != categories) {
                                     emit(Resource.Success(categories))
                                     db.updateCategories(categories)
+                                }
+                            } ?: emit(serverError())
+                        }
+                        Status.ERROR -> {
+                            emit(serverError(response.error))
+                        }
+                    }
+                }
+                is Resource.Error -> {
+                    emit(Resource.Error(result.message, result.isCritical))
+                }
+                else -> Unit
+            }
+        }
+    }
+
+    override suspend fun getChildProducts(parentId: Int, update: Boolean) = httpRequest {
+        val dbList = db.getChildProducts(parentId).radixSortedBy { category ->
+            category.id
+        }
+        if (dbList.isNotEmpty()) {
+            emit(Resource.Success(dbList))
+            emit(Resource.Loading(false))
+
+            if (!update) {
+                return@httpRequest
+            }
+        }
+
+        loginAuto().collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    val user = result.data
+                    val response = api.getProducts(
+                        ProductRequest(
+                            id = user.id,
+                            ids = dbList.joinToString { product ->
+                                product.id.toString()
+                            }
+                        )
+                    )
+                    when (response.status) {
+                        Status.OK -> {
+                            response.products?.let { list ->
+                                val catalog = list.map { productDto ->
+                                    productDto.toProduct()
+                                }.radixSortedBy { product ->
+                                    product.id
+                                }
+                                if (dbList != catalog) {
+                                    emit(Resource.Success(catalog))
+                                    db.updateCatalog(catalog)
                                 }
                             } ?: emit(serverError())
                         }
@@ -171,6 +224,61 @@ class CatalogRepositoryImpl @Inject constructor(
 
     override suspend fun getProductByCode(code: String, update: Boolean) = httpRequest {
         val dbEntity = db.getProductWithCode(code)
+        if (dbEntity == null) {
+            emit(Resource.Error(stringResource(R.string.product_unavailable)))
+            return@httpRequest
+        }
+
+        emit(Resource.Success(dbEntity))
+        emit(Resource.Loading(false))
+
+        if (!update) {
+            return@httpRequest
+        }
+
+        loginAuto().collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    val user = result.data
+                    val response = api.getProducts(
+                        ProductRequest(
+                            id = user.id,
+                            ids = dbEntity.id.toString()
+                        )
+                    )
+                    when (response.status) {
+                        Status.OK -> {
+                            response.products?.let { list ->
+                                val products = list.map {
+                                    it.toProduct()
+                                }
+                                if (products.isNotEmpty()) {
+                                    val product = products[0]
+                                    if (dbEntity != product) {
+                                        emit(Resource.Success(product))
+                                        db.updateProduct(product)
+                                    }
+                                }
+                            } ?: emit(serverError())
+                        }
+                        Status.ERROR -> {
+                            emit(serverError(response.error))
+                        }
+                    }
+                }
+                is Resource.Error -> {
+                    emit(Resource.Error(result.message, result.isCritical))
+                }
+                else -> Unit
+            }
+        }
+    }
+
+    override suspend fun getProductWithBarcode(
+        barcode: String,
+        update: Boolean
+    ) = httpRequest {
+        val dbEntity = db.getProductWithBarcode(barcode)
         if (dbEntity == null) {
             emit(Resource.Error(stringResource(R.string.product_unavailable)))
             return@httpRequest
