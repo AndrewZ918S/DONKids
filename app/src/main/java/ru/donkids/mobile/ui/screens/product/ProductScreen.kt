@@ -119,7 +119,7 @@ fun ProductScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            navigator?.navigate(SearchScreenDestination) {
+                            navigator?.navigate(SearchScreenDestination()) {
                                 launchSingleTop = true
                             }
                         }

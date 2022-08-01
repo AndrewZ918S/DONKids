@@ -53,7 +53,7 @@ fun ItemRecent(
                 )
             }
             Text(
-                text = recent.abbreviation,
+                text = recent.title,
                 style = MaterialTheme.typography.bodyMedium,
                 color = if (recent.isAvailable) {
                     MaterialTheme.colorScheme.onSurface

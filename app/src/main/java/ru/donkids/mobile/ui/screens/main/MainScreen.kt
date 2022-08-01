@@ -33,6 +33,8 @@ import com.ramcosta.composedestinations.manualcomposablecalls.composable
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.navigation.popUpTo
+import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.ResultRecipient
 import kotlinx.coroutines.launch
 import ru.donkids.mobile.R
 import ru.donkids.mobile.ui.core.DecorScaffold
@@ -40,20 +42,21 @@ import ru.donkids.mobile.ui.screens.NavGraphs
 import ru.donkids.mobile.ui.screens.destinations.CatalogPageDestination
 import ru.donkids.mobile.ui.screens.destinations.HomePageDestination
 import ru.donkids.mobile.ui.screens.destinations.LoginScreenDestination
-import ru.donkids.mobile.ui.screens.main.entity.MainScreenNavArgs
+import ru.donkids.mobile.ui.screens.destinations.SearchScreenDestination
+import ru.donkids.mobile.ui.screens.main.entity.MainScreenEvent
 import ru.donkids.mobile.ui.screens.main.entity.MainScreenNavigation
+import ru.donkids.mobile.ui.screens.search.entity.SearchScreenResult
 import ru.donkids.mobile.ui.theme.DONKidsTheme
 import ru.donkids.mobile.ui.theme.get
 
 @RootNavGraph(
     start = true
 )
-@Destination(
-    navArgsDelegate = MainScreenNavArgs::class
-)
+@Destination
 @Composable
 fun MainScreen(
-    navigator: DestinationsNavigator? = null
+    navigator: DestinationsNavigator? = null,
+    searchResult: ResultRecipient<SearchScreenDestination, SearchScreenResult>? = null
 ) {
     val viewModel: MainScreenViewModel = when (LocalView.current.isInEditMode) {
         true -> object : MainScreenViewModel() {}
@@ -96,6 +99,7 @@ fun MainScreen(
                             saveState = true
                         }
                         launchSingleTop = true
+                        restoreState = true
                     }
                 }
                 is MainScreenViewModel.Event.ShowMessage -> {
@@ -109,8 +113,20 @@ fun MainScreen(
         }
     }
 
+    searchResult?.onNavResult { result ->
+        if (result is NavResult.Value) {
+            viewModel.onEvent(
+                MainScreenEvent.OpenCatalog(
+                    destinationId = result.value.destinationId,
+                    query = result.value.query
+                )
+            )
+        }
+    }
+
     if (!LocalView.current.isInEditMode) {
         val activity = LocalContext.current as Activity
+
         BackHandler {
             activity.finish()
         }

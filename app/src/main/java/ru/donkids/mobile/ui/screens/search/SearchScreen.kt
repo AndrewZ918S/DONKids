@@ -23,6 +23,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.popUpTo
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 import ru.donkids.mobile.R
 import ru.donkids.mobile.ui.core.DecorScaffold
 import ru.donkids.mobile.ui.core.InputTextField
@@ -32,12 +33,17 @@ import ru.donkids.mobile.ui.screens.search.components.ItemCategory
 import ru.donkids.mobile.ui.screens.search.components.ItemProduct
 import ru.donkids.mobile.ui.screens.search.components.ItemTitle
 import ru.donkids.mobile.ui.screens.search.entity.SearchScreenEvent
+import ru.donkids.mobile.ui.screens.search.entity.SearchScreenNavArgs
+import ru.donkids.mobile.ui.screens.search.entity.SearchScreenResult
 
 @RootNavGraph
-@Destination
+@Destination(
+    navArgsDelegate = SearchScreenNavArgs::class
+)
 @Composable
 fun SearchScreen(
-    navigator: DestinationsNavigator? = null
+    navigator: DestinationsNavigator? = null,
+    resultNavigator: ResultBackNavigator<SearchScreenResult>? = null
 ) {
     val viewModel: SearchScreenViewModel = when (LocalView.current.isInEditMode) {
         true -> object : SearchScreenViewModel() {}
@@ -54,14 +60,12 @@ fun SearchScreen(
         viewModel.events.collect { event ->
             when (event) {
                 is SearchScreenViewModel.Event.OpenCatalog -> {
-                    navigator?.navigate(
-                        direction = MainScreenDestination(
+                    resultNavigator?.navigateBack(
+                        SearchScreenResult(
                             destinationId = event.id,
                             query = event.query
                         )
-                    ) {
-                        launchSingleTop = true
-                    }
+                    )
                 }
             }
         }
@@ -141,10 +145,12 @@ fun SearchScreen(
             Modifier.padding(innerPadding)
         ) {
             items(state.products.size) { index ->
-                ItemProduct(state.products[index]) {
+                ItemProduct(
+                    product = state.products[index]
+                ) { product ->
                     navigator?.navigate(
-                        direction = ProductScreenDestination(
-                            id = it.id
+                        ProductScreenDestination(
+                            id = product.id
                         )
                     ) {
                         popUpTo(MainScreenDestination)

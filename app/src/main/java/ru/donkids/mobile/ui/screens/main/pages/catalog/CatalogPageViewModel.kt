@@ -7,9 +7,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import ru.donkids.mobile.data.local.search.relevantSearch
 import ru.donkids.mobile.domain.repository.CatalogRepository
 import ru.donkids.mobile.ui.screens.destinations.CatalogPageDestination
 import ru.donkids.mobile.ui.screens.main.pages.catalog.entity.CatalogPageEvent
@@ -26,12 +29,13 @@ abstract class CatalogPageViewModel : ViewModel() {
 
     open fun onEvent(event: CatalogPageEvent) = Unit
 
-    sealed class Event {
+    sealed interface Event {
         data class RequestLogin(
             val message: String
-        ) : Event()
+        ) : Event
 
-        object NavBack : Event()
+        object OpenSearch : Event
+        object NavBack : Event
     }
 }
 
@@ -48,11 +52,9 @@ class CatalogPageViewModelImpl @Inject constructor(
                 when (result) {
                     is Resource.Success -> {
                         state = state.copy(
-                            destination = result.data.find {
-                                it.id == args.destinationId
-                            },
                             categories = result.data
                         )
+                        changeDestination(args.destinationId, args.query)
                     }
                     is Resource.Error -> {
                         if (result.isCritical) {
@@ -69,20 +71,81 @@ class CatalogPageViewModelImpl @Inject constructor(
         viewModelScope.launch {
             when (event) {
                 is CatalogPageEvent.SelectCategory -> {
-                    state = state.copy(
-                        destination = state.categories.find {
-                            it.id == event.id
-                        }
-                    )
+                    changeDestination(event.id)
+                }
+                is CatalogPageEvent.OpenSearch -> {
+                    eventChannel.send(Event.OpenSearch)
                 }
                 is CatalogPageEvent.NavBack -> {
                     state.destination?.let { destination ->
                         state = state.copy(
                             destination = state.categories.find {
                                 it.id == destination.parentId
-                            }
+                            },
+                            products = null,
+                            query = null
+                        )
+                    } ?: state.query?.let {
+                        state = state.copy(
+                            products = null,
+                            query = null
                         )
                     } ?: eventChannel.send(Event.NavBack)
+                }
+            }
+        }
+    }
+
+    private suspend fun changeDestination(id: Int, query: String? = null) {
+        state = state.copy(
+            destination = state.categories.find {
+                it.id == id
+            },
+            query = query
+        )
+        if (state.categories.none { it.parentId == id }) {
+            withContext(Dispatchers.IO) {
+
+                if (id > 0) {
+                    repository.getChildProducts(id).collect { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                val products = result.data.filter { !it.isCategory }
+
+                                state = state.copy(
+                                    products = state.query?.let { query ->
+                                        products.relevantSearch(query)
+                                    } ?: products
+                                )
+                            }
+                            is Resource.Error -> {
+                                if (result.isCritical) {
+                                    eventChannel.send(Event.RequestLogin(result.message))
+                                }
+                            }
+                            else -> Unit
+                        }
+                    }
+                } else {
+                    repository.getCatalog().collect { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                val products = result.data.filter { !it.isCategory }
+
+                                state = state.copy(
+                                    products = state.query?.let { query ->
+                                        products.relevantSearch(query)
+                                    } ?: products
+                                )
+                            }
+                            is Resource.Error -> {
+                                if (result.isCritical) {
+                                    eventChannel.send(Event.RequestLogin(result.message))
+                                }
+                            }
+                            else -> Unit
+                        }
+                    }
                 }
             }
         }

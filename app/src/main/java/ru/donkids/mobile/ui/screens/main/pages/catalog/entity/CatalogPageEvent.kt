@@ -1,9 +1,10 @@
 package ru.donkids.mobile.ui.screens.main.pages.catalog.entity
 
-sealed class CatalogPageEvent {
+sealed interface CatalogPageEvent {
     data class SelectCategory(
         val id: Int
-    ) : CatalogPageEvent()
+    ) : CatalogPageEvent
 
-    object NavBack: CatalogPageEvent()
+    object NavBack: CatalogPageEvent
+    object OpenSearch : CatalogPageEvent
 }

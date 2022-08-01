@@ -6,7 +6,7 @@ sealed class SearchScreenEvent {
     ) : SearchScreenEvent()
 
     data class OpenCatalog(
-        val id: Int = 0,
+        val id: Int = -1,
         val query: String? = null
     ) : SearchScreenEvent()
 }
