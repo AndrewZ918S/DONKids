@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Shapes
 import androidx.compose.material3.Surface
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
@@ -14,6 +13,7 @@ import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -25,7 +25,7 @@ import androidx.core.view.WindowCompat
 @NonRestartableComposable
 fun DecorSurface(
     modifier: Modifier = Modifier,
-    shape: Shape = Shapes.None,
+    shape: Shape = RectangleShape,
     statusBarColor: Color? = null,
     navigationBarColor: Color? = null,
     darkStatusBar: Boolean = isSystemInDarkTheme(),

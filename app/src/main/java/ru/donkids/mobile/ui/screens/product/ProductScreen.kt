@@ -83,13 +83,13 @@ fun ProductScreen(
 
     val topBarColors = TopAppBarDefaults.smallTopAppBarColors()
     val topBarBehavior = TopAppBarDefaults.pinnedScrollBehavior(
-        state = rememberTopAppBarScrollState()
+        state = rememberTopAppBarState()
     )
 
     DecorScaffold(
         modifier = Modifier.nestedScroll(topBarBehavior.nestedScrollConnection),
         statusBarColor = topBarColors
-            .containerColor(topBarBehavior.scrollFraction)
+            .containerColor(topBarBehavior.state.overlappedFraction)
             .value,
         navigationBarColor = colorScheme.surface[2],
         topBar = {
@@ -339,7 +339,7 @@ fun ProductScreen(
                 }
                 if (state.isAvailable) {
                     ExtendedFloatingActionButton(
-                        elevation = BottomAppBarDefaults.FloatingActionButtonElevation,
+                        elevation = BottomAppBarDefaults.BottomAppBarFabElevation,
                         onClick = {
                             if (state.isInCart) {
                                 viewModel.onEvent(ProductScreenEvent.GoToCart)

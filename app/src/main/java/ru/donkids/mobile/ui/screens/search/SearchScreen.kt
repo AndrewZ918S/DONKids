@@ -53,7 +53,7 @@ fun SearchScreen(
 
     val topBarColors = TopAppBarDefaults.smallTopAppBarColors()
     val topBarBehavior = TopAppBarDefaults.pinnedScrollBehavior(
-        state = rememberTopAppBarScrollState()
+        state = rememberTopAppBarState()
     )
 
     LaunchedEffect(Unit) {
@@ -74,7 +74,7 @@ fun SearchScreen(
     DecorScaffold(
         modifier = Modifier.nestedScroll(topBarBehavior.nestedScrollConnection),
         statusBarColor = topBarColors
-            .containerColor(topBarBehavior.scrollFraction)
+            .containerColor(topBarBehavior.state.overlappedFraction)
             .value,
         navigationBarColor = colorScheme.surface,
         topBar = {

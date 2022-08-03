@@ -74,7 +74,7 @@ fun CatalogPage(
 
     val topBarColors = TopAppBarDefaults.smallTopAppBarColors()
     val topBarBehavior = TopAppBarDefaults.pinnedScrollBehavior(
-        state = rememberTopAppBarScrollState()
+        state = rememberTopAppBarState()
     )
 
     BackHandler {
@@ -84,9 +84,7 @@ fun CatalogPage(
     DecorScaffold(
         modifier = Modifier.nestedScroll(topBarBehavior.nestedScrollConnection),
         statusBarColor = topBarColors
-            .containerColor(
-                scrollFraction = topBarBehavior.scrollFraction
-            )
+            .containerColor(topBarBehavior.state.overlappedFraction)
             .value,
         topBar = {
             SmallTopAppBar(
